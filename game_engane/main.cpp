@@ -44,8 +44,8 @@ namespace my_fun {
 
 using namespace std;
 using namespace math;
-// namespace canvas;
 using namespace my_fun;
+// namespace canvas;
 
 int* interpolated(int i0, int d0, int i1, int d1, int& size) {
     size = abs(i1 - i0) + 1; // Количество интерполированных значений
@@ -109,23 +109,32 @@ void DrawWireframeTringle(Canvas canvas, point_2D<int> P0, point_2D<int> P1, poi
 
 }
 
-//DrawWireframeTringle(
-//    canvas,
-//    point_2D<int>(14, 124),
-//    point_2D<int>(51, 14),
-//    point_2D<int>(189, 14)
-//);
+void DrawCircle(Canvas canvas, int centerX, int centerY, int radius, COLORREF color = RGB(0, 0, 0)) {
+    for (int angle = 0; angle < 360; angle++) {
+        int x = centerX + static_cast<int>(radius * cos(angle * 3.14159 / 180));
+        int y = centerY + static_cast<int>(radius * sin(angle * 3.14159 / 180));
+        canvas.PutPixel(x, y, color);  // Рисуем каждый пиксель круга
+    }
+}
+
 
 
 // Глобальная функция для отрисовки
 void DrawExample(Canvas& canvas) {
     static int angle = 0;
-    int centerX = 400;
-    int centerY = 300;
+    int centerX = 200;
+    int centerY = 150;
     int radius = 50;
 
-    canvas.DrawCircle(centerX, centerY, radius, RGB(0, 255, 0));
+    DrawCircle(canvas, centerX, centerY, radius, RGB(0, 255, 0));
     angle = (angle + 5) % 360;
+
+    DrawWireframeTringle(
+        canvas,
+        point_2D<int>(14, 124),
+        point_2D<int>(51, 14),
+        point_2D<int>(189, 14)
+    );
 }
 
 // Главная функция
@@ -137,7 +146,7 @@ int main() {
 #endif
 
     Canvas canvas(platformCanvas); // Передаем платформенный класс в Canvas
-    canvas.Run(DrawExample, 60); // Запускаем отрисовку
+    canvas.Run(DrawExample, 600); // Запускаем отрисовку
     delete platformCanvas; // Освобождаем память
     return 0; // Завершаем программу
 }

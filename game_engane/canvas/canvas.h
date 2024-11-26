@@ -4,102 +4,126 @@
 #include <chrono>
 #include <thread>
 #include <cmath>
-#ifdef _WIN32
 #include <windows.h>
-#endif
 
-// Абстрактный базовый класс для платформы
+// Абстрактный базовый класс для платформы, от которого будут наследоваться все платформенные реализации.
 class PlatformCanvas {
 public:
     virtual ~PlatformCanvas() {}
-    virtual void Clear() = 0;
-    virtual void PutPixel(int x, int y, COLORREF color) = 0;
-    virtual void Initialize(size_t width, size_t height, const std::wstring& title) = 0; // Используем size_t
-    virtual void ProcessEvents() = 0; // Обработка событий
-    virtual bool ShouldQuit() const = 0; // Проверка на завершение
-    virtual void DrawText(int x, int y, const std::wstring& text, COLORREF color) = 0; // Новый метод для отрисовки текста
+
+    // Чисто виртуальные методы, которые будут переопределены в каждой платформе.
+    virtual void Clear() = 0;  // Очистить экран
+    virtual void PutPixel(int x, int y, COLORREF color) = 0;  // Нарисовать пиксель в определенной позиции с заданным цветом
+    virtual void Initialize(size_t width, size_t height, const std::wstring& title) = 0;  // Инициализация окна с заданными параметрами
+    virtual void ProcessEvents() = 0;  // Обработка событий (например, нажатия клавиш)
+    virtual bool ShouldQuit() const = 0;  // Проверка, нужно ли завершить выполнение (например, по нажатию Escape)
+    virtual void DrawText(int x, int y, const std::wstring& text, COLORREF color) = 0;  // Отрисовка текста на экране
+
+    // Методы для получения размеров окна (теперь возвращают int).
+    virtual int GetWidth() const = 0;  // Возвращает ширину окна
+    virtual int GetHeight() const = 0;  // Возвращает высоту окна
 };
 
-// Класс для Windows
+// Класс для Windows-платформы, реализует методы для рисования на экране в Windows.
 class WindowsCanvas : public PlatformCanvas {
 public:
-    WindowsCanvas() : hwnd(nullptr), hInstance(GetModuleHandle(NULL)) {}
+    WindowsCanvas() : hwnd(nullptr), hInstance(GetModuleHandle(NULL)), width(800), height(600) {}
 
+    // Инициализация окна с заданными размерами и названием
     void Initialize(size_t width, size_t height, const std::wstring& title) override {
-        WNDCLASS wc = {};
-        wc.lpfnWndProc = StaticWindowProc;
-        wc.hInstance = hInstance;
-        wc.lpszClassName = L"CanvasWindowClass";
-        RegisterClass(&wc);
+        this->width = width;  // Сохраняем переданные размеры
+        this->height = height;
 
+        WNDCLASS wc = {};
+        wc.lpfnWndProc = StaticWindowProc;  // Указываем обработчик сообщений окна
+        wc.hInstance = hInstance;
+        wc.lpszClassName = L"CanvasWindowClass";  // Имя класса окна
+        RegisterClass(&wc);  // Регистрируем класс окна
+
+        // Создаем окно с указанными параметрами
         hwnd = CreateWindowEx(
             0, L"CanvasWindowClass", title.c_str(),
-            WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-            CW_USEDEFAULT, CW_USEDEFAULT, static_cast<int>(width), static_cast<int>(height), // Приведение к int
+            WS_OVERLAPPEDWINDOW | WS_VISIBLE,  // Стандартный стиль окна
+            CW_USEDEFAULT, CW_USEDEFAULT, static_cast<int>(width), static_cast<int>(height),
             NULL, NULL, hInstance, this
         );
     }
 
+    // Очистка экрана
     void Clear() override {
-        HDC hdc = GetDC(hwnd);
+        HDC hdc = GetDC(hwnd);  // Получаем контекст устройства для рисования
         RECT rect;
-        GetClientRect(hwnd, &rect);
-        FillRect(hdc, &rect, (HBRUSH)(COLOR_WINDOW + 1));
-        ReleaseDC(hwnd, hdc);
+        GetClientRect(hwnd, &rect);  // Получаем размеры клиентской области окна
+        FillRect(hdc, &rect, (HBRUSH)(COLOR_WINDOW + 1));  // Заполняем экран фоном
+        ReleaseDC(hwnd, hdc);  // Освобождаем контекст устройства
     }
 
+    // Установка пикселя на экран
     void PutPixel(int x, int y, COLORREF color) override {
-        HDC hdc = GetDC(hwnd);
-        SetPixel(hdc, x, y, color);
-        ReleaseDC(hwnd, hdc);
+        HDC hdc = GetDC(hwnd);  // Получаем контекст устройства
+        SetPixel(hdc, x, y, color);  // Устанавливаем пиксель в заданной позиции
+        ReleaseDC(hwnd, hdc);  // Освобождаем контекст устройства
     }
 
+    // Отрисовка текста на экране
     void DrawText(int x, int y, const std::wstring& text, COLORREF color) override {
-        HDC hdc = GetDC(hwnd);
-        SetTextColor(hdc, color);
-        TextOut(hdc, x, y, text.c_str(), static_cast<int>(text.length()));
-        ReleaseDC(hwnd, hdc);
+        HDC hdc = GetDC(hwnd);  // Получаем контекст устройства
+        SetTextColor(hdc, color);  // Устанавливаем цвет текста
+        TextOut(hdc, x, y, text.c_str(), static_cast<int>(text.length()));  // Отрисовываем текст
+        ReleaseDC(hwnd, hdc);  // Освобождаем контекст устройства
     }
 
+    // Обработка сообщений и событий окна
     void ProcessEvents() override {
         MSG msg;
-        while (PeekMessage(&msg, hwnd, 0, 0, PM_REMOVE)) { // Исправлено: добавлен hwnd
+        while (PeekMessage(&msg, hwnd, 0, 0, PM_REMOVE)) {  // Проверка на наличие сообщений
             TranslateMessage(&msg);
-            DispatchMessage(&msg);
+            DispatchMessage(&msg);  // Обработка сообщений
         }
     }
 
+    // Проверка, нужно ли завершить выполнение (например, по нажатию клавиши Escape)
     bool ShouldQuit() const override {
-        return (GetAsyncKeyState(VK_ESCAPE) & 0x8000);
+        return (GetAsyncKeyState(VK_ESCAPE) & 0x8000);  // Проверяем состояние клавиши Escape
+    }
+
+    // Возвращает ширину окна
+    int GetWidth() const override {
+        return static_cast<int>(width);  // Возвращаем ширину окна как int
+    }
+
+    // Возвращает высоту окна
+    int GetHeight() const override {
+        return static_cast<int>(height);  // Возвращаем высоту окна как int
     }
 
 protected:
-    HWND hwnd;
-    HINSTANCE hInstance;
+    HWND hwnd;  // Дескриптор окна
+    HINSTANCE hInstance;  // Дескриптор приложения
+    size_t width, height;  // Ширина и высота окна
 
+    // Статическая функция для обработки сообщений окна
     static LRESULT CALLBACK StaticWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
         if (uMsg == WM_NCCREATE) {
             CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
             WindowsCanvas* pCanvas = reinterpret_cast<WindowsCanvas*>(pCreate->lpCreateParams);
-            SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)pCanvas);
+            SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)pCanvas);  // Сохраняем указатель на объект Canvas
         }
         else {
             WindowsCanvas* pCanvas = reinterpret_cast<WindowsCanvas*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
             if (pCanvas && uMsg == WM_DESTROY) {
-                PostQuitMessage(0);
+                PostQuitMessage(0);  // Закрываем окно
                 return 0;
             }
         }
-        return DefWindowProc(hwnd, uMsg, wParam, lParam);
+        return DefWindowProc(hwnd, uMsg, wParam, lParam);  // Обрабатываем стандартные сообщения
     }
 };
 
-// Заглушка для LinuxCanvas
+// Заглушка для LinuxCanvas (реализуем только вывод в консоль)
 class LinuxCanvas : public PlatformCanvas {
 public:
-    LinuxCanvas() {
-        // Здесь должна быть инициализация для Linux
-    }
+    LinuxCanvas() {}
 
     void Initialize(size_t width, size_t height, const std::wstring& title) override {
         std::wcout << L"LinuxCanvas: Инициализация окна " << title << L" (" << width << L"x" << height << L")" << std::endl;
@@ -122,70 +146,81 @@ public:
     }
 
     bool ShouldQuit() const override {
-        return false; // Заглушка
+        return false;
+    }
+
+    int GetWidth() const override {
+        return 800;  // Заглушка для Linux
+    }
+
+    int GetHeight() const override {
+        return 600;  // Заглушка для Linux
     }
 };
 
-// Класс Canvas, который использует PlatformCanvas
+// Класс Canvas, который использует PlatformCanvas для рисования на экране.
 class Canvas {
 public:
+    // Конструктор принимает платформенный класс, который будет использоваться для рисования.
     Canvas(PlatformCanvas* platformCanvas) : platformCanvas(platformCanvas), clearScreen(true) {}
 
+    // Основной цикл приложения, где происходит отрисовка.
     void Run(std::function<void(Canvas&)> drawFunc, int targetFPS) {
-        platformCanvas->Initialize(800, 600, L"Canvas Application"); // Изменено на L""
+        platformCanvas->Initialize(800, 600, L"Canvas Application");  // Инициализация окна с размерами 800x600
 
-        auto frameDuration = std::chrono::milliseconds(1000 / targetFPS);
+        auto frameDuration = std::chrono::milliseconds(1000 / targetFPS);  // Вычисление продолжительности одного кадра
         auto lastTime = std::chrono::high_resolution_clock::now();
         int frameCount = 0;
 
         while (true) {
-            platformCanvas->ProcessEvents();
+            platformCanvas->ProcessEvents();  // Обработка событий
             if (platformCanvas->ShouldQuit()) {
-                break; // Выход из цикла
+                break;  // Выход из цикла, если нужно завершить программу
             }
 
             if (clearScreen) {
-                platformCanvas->Clear();
+                platformCanvas->Clear();  // Очистка экрана
             }
 
-            drawFunc(*this);
+            drawFunc(*this);  // Вызов переданной функции для рисования
             frameCount++;
 
-            // Вычисление и отображение FPS
-            auto currentTime = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double> elapsed = currentTime - lastTime;
-            if (elapsed.count() >= 1.0) {
-                std::wstring fpsText = L"FPS: " + std::to_wstring(frameCount);
-                platformCanvas->DrawText(10, 10, fpsText, RGB(255, 0, 0)); // Отображение FPS в верхнем левом углу
-                frameCount = 0;
-                lastTime = currentTime;
-            }
-
-            std::this_thread::sleep_for(frameDuration); // Ограничение FPS
+            std::this_thread::sleep_for(frameDuration);  // Ограничение FPS
         }
     }
 
+    // Очистка экрана
     void Clear() {
         platformCanvas->Clear();
     }
 
-    void PutPixel(int x, int y, COLORREF color) {
-        platformCanvas->PutPixel(x, y, color);
-    }
-
-    void DrawCircle(int centerX, int centerY, int radius, COLORREF color) {
-        for (int angle = 0; angle < 360; angle++) {
-            int x = centerX + static_cast<int>(radius * cos(angle * 3.14159 / 180));
-            int y = centerY + static_cast<int>(radius * sin(angle * 3.14159 / 180));
-            PutPixel(x, y, color);
-        }
-    }
-
+    // Переключатель режима очистки экрана (например, чтобы не очищать экран каждый раз)
     void ToggleClearScreen() {
-        clearScreen = !clearScreen; // Переключение флага очистки экрана
+        clearScreen = !clearScreen;
+    }
+
+    // Получение ширины окна
+    int GetWidth() const {
+        return platformCanvas->GetWidth();  // Вызываем метод платформенного класса
+    }
+
+    // Получение высоты окна
+    int GetHeight() const {
+        return platformCanvas->GetHeight();  // Вызываем метод платформенного класса
+    }
+
+
+    // Установка пикселя на экране
+    void PutPixel(int x, int y, COLORREF color) {
+        platformCanvas->PutPixel(
+            GetWidth() / 2 + x,
+            GetHeight() / 2 + y,
+            color);
     }
 
 private:
-    PlatformCanvas* platformCanvas; // Указатель на платформенный класс
-    bool clearScreen; // Флаг для управления очисткой экрана
+    PlatformCanvas* platformCanvas;  // Указатель на платформенный класс для рисования
+    bool clearScreen;  // Флаг, указывающий, нужно ли очищать экран при каждом кадре
 };
+
+
