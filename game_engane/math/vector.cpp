@@ -9,7 +9,7 @@ using namespace math;
 
 template <typename T>
 void vector_2D<T>::print_vector() {
-    // Вывод координат вектора
+    // Р’С‹РІРѕРґ РєРѕРѕСЂРґРёРЅР°С‚ РІРµРєС‚РѕСЂР°
     cout << "x = " << this->x << endl;
     cout << "y = " << this->y << endl;
 }
@@ -18,17 +18,17 @@ void vector_2D<T>::print_vector() {
 
 template <typename T>
 void vector_3D<T>::print_vector() {
-    // Вывод координат вектора
+    // Р’С‹РІРѕРґ РєРѕРѕСЂРґРёРЅР°С‚ РІРµРєС‚РѕСЂР°
     cout << "x = " << this->x << endl;
     cout << "y = " << this->y << endl;
     cout << "z = " << this->z << endl;
 }
 
-// Оператор сложения векторов
+// РћРїРµСЂР°С‚РѕСЂ СЃР»РѕР¶РµРЅРёСЏ РІРµРєС‚РѕСЂРѕРІ
 
 template <typename T>
 point_3D<T> vector_3D<T>::operator+(point_3D<T> p) {
-    // Сложение координат векторов
+    // РЎР»РѕР¶РµРЅРёРµ РєРѕРѕСЂРґРёРЅР°С‚ РІРµРєС‚РѕСЂРѕРІ
     p.x += this->x;
     p.y += this->y;
     p.z += this->z;
@@ -36,47 +36,47 @@ point_3D<T> vector_3D<T>::operator+(point_3D<T> p) {
     return p;
 }
 
-// Оператор сложения векторов
+// РћРїРµСЂР°С‚РѕСЂ СЃР»РѕР¶РµРЅРёСЏ РІРµРєС‚РѕСЂРѕРІ
 
 template <typename T>
 vector_3D<T> vector_3D<T>::operator+(vector_3D<T> vec) {
-    // Сложение координат векторов
+    // РЎР»РѕР¶РµРЅРёРµ РєРѕРѕСЂРґРёРЅР°С‚ РІРµРєС‚РѕСЂРѕРІ
     return vector_3D<T>(this->x + vec.x,
         this->y + vec.y,
         this->z + vec.z);
 }
 
-// Оператор умножения вектора на скаляр
+// РћРїРµСЂР°С‚РѕСЂ СѓРјРЅРѕР¶РµРЅРёСЏ РІРµРєС‚РѕСЂР° РЅР° СЃРєР°Р»СЏСЂ
 
 template <typename T>
 vector_3D<T> vector_3D<T>::operator*(T num) {
-    // Умножение координат вектора на скаляр
+    // РЈРјРЅРѕР¶РµРЅРёРµ РєРѕРѕСЂРґРёРЅР°С‚ РІРµРєС‚РѕСЂР° РЅР° СЃРєР°Р»СЏСЂ
     return vector_3D<T>(this->x * num,
         this->y * num,
         this->z * num);
 }
 
-// Длина вектора
+// Р”Р»РёРЅР° РІРµРєС‚РѕСЂР°
 
 template <typename T>
 T vector_3D<T>::length() {
-    // Вычисление длины вектора
+    // Р’С‹С‡РёСЃР»РµРЅРёРµ РґР»РёРЅС‹ РІРµРєС‚РѕСЂР°
     return std::sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
 }
 
-// Скалярное произведение векторов
+// РЎРєР°Р»СЏСЂРЅРѕРµ РїСЂРѕРёР·РІРµРґРµРЅРёРµ РІРµРєС‚РѕСЂРѕРІ
 
 template <typename T>
 T vector_3D<T>::scoliar_product(vector_3D<T> vec) {
-    // Вычисление скалярного произведения векторов
+    // Р’С‹С‡РёСЃР»РµРЅРёРµ СЃРєР°Р»СЏСЂРЅРѕРіРѕ РїСЂРѕРёР·РІРµРґРµРЅРёСЏ РІРµРєС‚РѕСЂРѕРІ
     return this->x * vec.x + this->y * vec.y + this->z * vec.z;
 }
 
-// Векторное произведение векторов
+// Р’РµРєС‚РѕСЂРЅРѕРµ РїСЂРѕРёР·РІРµРґРµРЅРёРµ РІРµРєС‚РѕСЂРѕРІ
 
 template <typename T>
 vector_3D<T> vector_3D<T>::vector_product(vector_3D<T> vec) {
-    // Вычисление векторного произведения векторов
+    // Р’С‹С‡РёСЃР»РµРЅРёРµ РІРµРєС‚РѕСЂРЅРѕРіРѕ РїСЂРѕРёР·РІРµРґРµРЅРёСЏ РІРµРєС‚РѕСЂРѕРІ
     return vector_3D<T>(this->y * vec.z - this->z * vec.y,
         this->z * vec.x - this->x * vec.z,
         this->x * vec.y - this->y * vec.x);

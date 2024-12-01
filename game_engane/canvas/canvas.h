@@ -6,212 +6,196 @@
 #include <cmath>
 #include <windows.h>
 
-// Абстрактный базовый класс для платформы, от которого будут наследоваться все платформенные реализации.
+
+// РєР»Р°СЃСЃ С†РІРµС‚Р° 
+
+class rgb_color {
+public:
+    int r = 0;
+    int g = 0;
+    int b = 0;
+
+    rgb_color(int r, int g, int b) : r(r), g(g), b(b) {};
+
+    COLORREF get_color_win(){
+        return RGB(r, g, b);
+    }
+};
+
+// РђР±СЃС‚СЂР°РєС‚РЅС‹Р№ Р±Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ РґР»СЏ РїР»Р°С‚С„РѕСЂРјС‹, РѕС‚ РєРѕС‚РѕСЂРѕРіРѕ Р±СѓРґСѓС‚ РЅР°СЃР»РµРґРѕРІР°С‚СЊСЃСЏ РІСЃРµ РїР»Р°С‚С„РѕСЂРјРµРЅРЅС‹Рµ СЂРµР°Р»РёР·Р°С†РёРё.
 class PlatformCanvas {
 public:
     virtual ~PlatformCanvas() {}
 
-    // Чисто виртуальные методы, которые будут переопределены в каждой платформе.
-    virtual void Clear() = 0;  // Очистить экран
-    virtual void PutPixel(int x, int y, COLORREF color) = 0;  // Нарисовать пиксель в определенной позиции с заданным цветом
-    virtual void Initialize(size_t width, size_t height, const std::wstring& title) = 0;  // Инициализация окна с заданными параметрами
-    virtual void ProcessEvents() = 0;  // Обработка событий (например, нажатия клавиш)
-    virtual bool ShouldQuit() const = 0;  // Проверка, нужно ли завершить выполнение (например, по нажатию Escape)
-    virtual void DrawText(int x, int y, const std::wstring& text, COLORREF color) = 0;  // Отрисовка текста на экране
+    // Р§РёСЃС‚Рѕ РІРёСЂС‚СѓР°Р»СЊРЅС‹Рµ РјРµС‚РѕРґС‹, РєРѕС‚РѕСЂС‹Рµ Р±СѓРґСѓС‚ РїРµСЂРµРѕРїСЂРµРґРµР»РµРЅС‹ РІ РєР°Р¶РґРѕР№ РїР»Р°С‚С„РѕСЂРјРµ.
+    virtual void Clear() = 0;  // РћС‡РёСЃС‚РёС‚СЊ СЌРєСЂР°РЅ
+    virtual void PutPixel(int x, int y, rgb_color color) = 0;  // РќР°СЂРёСЃРѕРІР°С‚СЊ РїРёРєСЃРµР»СЊ РІ РѕРїСЂРµРґРµР»РµРЅРЅРѕР№ РїРѕР·РёС†РёРё СЃ Р·Р°РґР°РЅРЅС‹Рј С†РІРµС‚РѕРј
+    virtual void Initialize(size_t width, size_t height, const std::wstring& title) = 0;  // РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РѕРєРЅР° СЃ Р·Р°РґР°РЅРЅС‹РјРё РїР°СЂР°РјРµС‚СЂР°РјРё
+    virtual void ProcessEvents() = 0;  // РћР±СЂР°Р±РѕС‚РєР° СЃРѕР±С‹С‚РёР№ (РЅР°РїСЂРёРјРµСЂ, РЅР°Р¶Р°С‚РёСЏ РєР»Р°РІРёС€)
+    virtual bool ShouldQuit() const = 0;  // РџСЂРѕРІРµСЂРєР°, РЅСѓР¶РЅРѕ Р»Рё Р·Р°РІРµСЂС€РёС‚СЊ РІС‹РїРѕР»РЅРµРЅРёРµ (РЅР°РїСЂРёРјРµСЂ, РїРѕ РЅР°Р¶Р°С‚РёСЋ Escape)
+    virtual void DrawText(int x, int y, const std::wstring& text, COLORREF color) = 0;  // РћС‚СЂРёСЃРѕРІРєР° С‚РµРєСЃС‚Р° РЅР° СЌРєСЂР°РЅРµ
 
-    // Методы для получения размеров окна (теперь возвращают int).
-    virtual int GetWidth() const = 0;  // Возвращает ширину окна
-    virtual int GetHeight() const = 0;  // Возвращает высоту окна
+    // РњРµС‚РѕРґС‹ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ СЂР°Р·РјРµСЂРѕРІ РѕРєРЅР° (С‚РµРїРµСЂСЊ РІРѕР·РІСЂР°С‰Р°СЋС‚ int).
+    virtual int GetWidth() const = 0;  // Р’РѕР·РІСЂР°С‰Р°РµС‚ С€РёСЂРёРЅСѓ РѕРєРЅР°
+    virtual int GetHeight() const = 0;  // Р’РѕР·РІСЂР°С‰Р°РµС‚ РІС‹СЃРѕС‚Сѓ РѕРєРЅР°
 };
 
-// Класс для Windows-платформы, реализует методы для рисования на экране в Windows.
+// РљР»Р°СЃСЃ РґР»СЏ Windows-РїР»Р°С‚С„РѕСЂРјС‹, СЂРµР°Р»РёР·СѓРµС‚ РјРµС‚РѕРґС‹ РґР»СЏ СЂРёСЃРѕРІР°РЅРёСЏ РЅР° СЌРєСЂР°РЅРµ РІ Windows.
 class WindowsCanvas : public PlatformCanvas {
 public:
     WindowsCanvas() : hwnd(nullptr), hInstance(GetModuleHandle(NULL)), width(800), height(600) {}
 
-    // Инициализация окна с заданными размерами и названием
+    // РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РѕРєРЅР° СЃ Р·Р°РґР°РЅРЅС‹РјРё СЂР°Р·РјРµСЂР°РјРё Рё РЅР°Р·РІР°РЅРёРµРј
     void Initialize(size_t width, size_t height, const std::wstring& title) override {
-        this->width = width;  // Сохраняем переданные размеры
+        this->width = width;  // РЎРѕС…СЂР°РЅСЏРµРј РїРµСЂРµРґР°РЅРЅС‹Рµ СЂР°Р·РјРµСЂС‹
         this->height = height;
 
         WNDCLASS wc = {};
-        wc.lpfnWndProc = StaticWindowProc;  // Указываем обработчик сообщений окна
+        wc.lpfnWndProc = StaticWindowProc;  // РЈРєР°Р·С‹РІР°РµРј РѕР±СЂР°Р±РѕС‚С‡РёРє СЃРѕРѕР±С‰РµРЅРёР№ РѕРєРЅР°
         wc.hInstance = hInstance;
-        wc.lpszClassName = L"CanvasWindowClass";  // Имя класса окна
-        RegisterClass(&wc);  // Регистрируем класс окна
+        wc.lpszClassName = L"CanvasWindowClass";  // РРјСЏ РєР»Р°СЃСЃР° РѕРєРЅР°
+        RegisterClass(&wc);  // Р РµРіРёСЃС‚СЂРёСЂСѓРµРј РєР»Р°СЃСЃ РѕРєРЅР°
 
-        // Создаем окно с указанными параметрами
+        // РЎРѕР·РґР°РµРј РѕРєРЅРѕ СЃ СѓРєР°Р·Р°РЅРЅС‹РјРё РїР°СЂР°РјРµС‚СЂР°РјРё
         hwnd = CreateWindowEx(
             0, L"CanvasWindowClass", title.c_str(),
-            WS_OVERLAPPEDWINDOW | WS_VISIBLE,  // Стандартный стиль окна
+            WS_OVERLAPPEDWINDOW | WS_VISIBLE,  // РЎС‚Р°РЅРґР°СЂС‚РЅС‹Р№ СЃС‚РёР»СЊ РѕРєРЅР°
             CW_USEDEFAULT, CW_USEDEFAULT, static_cast<int>(width), static_cast<int>(height),
             NULL, NULL, hInstance, this
         );
     }
 
-    // Очистка экрана
+    // РћС‡РёСЃС‚РєР° СЌРєСЂР°РЅР°
     void Clear() override {
-        HDC hdc = GetDC(hwnd);  // Получаем контекст устройства для рисования
+        HDC hdc = GetDC(hwnd);  // РџРѕР»СѓС‡Р°РµРј РєРѕРЅС‚РµРєСЃС‚ СѓСЃС‚СЂРѕР№СЃС‚РІР° РґР»СЏ СЂРёСЃРѕРІР°РЅРёСЏ
         RECT rect;
-        GetClientRect(hwnd, &rect);  // Получаем размеры клиентской области окна
-        FillRect(hdc, &rect, (HBRUSH)(COLOR_WINDOW + 1));  // Заполняем экран фоном
-        ReleaseDC(hwnd, hdc);  // Освобождаем контекст устройства
+        GetClientRect(hwnd, &rect);  // РџРѕР»СѓС‡Р°РµРј СЂР°Р·РјРµСЂС‹ РєР»РёРµРЅС‚СЃРєРѕР№ РѕР±Р»Р°СЃС‚Рё РѕРєРЅР°
+        FillRect(hdc, &rect, (HBRUSH)(COLOR_WINDOW + 1));  // Р—Р°РїРѕР»РЅСЏРµРј СЌРєСЂР°РЅ С„РѕРЅРѕРј
+        ReleaseDC(hwnd, hdc);  // РћСЃРІРѕР±РѕР¶РґР°РµРј РєРѕРЅС‚РµРєСЃС‚ СѓСЃС‚СЂРѕР№СЃС‚РІР°
     }
 
-    // Установка пикселя на экран
-    void PutPixel(int x, int y, COLORREF color) override {
-        HDC hdc = GetDC(hwnd);  // Получаем контекст устройства
-        SetPixel(hdc, x, y, color);  // Устанавливаем пиксель в заданной позиции
-        ReleaseDC(hwnd, hdc);  // Освобождаем контекст устройства
+    // РЈСЃС‚Р°РЅРѕРІРєР° РїРёРєСЃРµР»СЏ РЅР° СЌРєСЂР°РЅ
+    void PutPixel(int x, int y, rgb_color color) override {
+        HDC hdc = GetDC(hwnd);  // РџРѕР»СѓС‡Р°РµРј РєРѕРЅС‚РµРєСЃС‚ СѓСЃС‚СЂРѕР№СЃС‚РІР°
+        SetPixel(hdc, x, y, color.get_color_win());  // РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј РїРёРєСЃРµР»СЊ РІ Р·Р°РґР°РЅРЅРѕР№ РїРѕР·РёС†РёРё
+        ReleaseDC(hwnd, hdc);  // РћСЃРІРѕР±РѕР¶РґР°РµРј РєРѕРЅС‚РµРєСЃС‚ СѓСЃС‚СЂРѕР№СЃС‚РІР°
     }
 
-    // Отрисовка текста на экране
+    // РћС‚СЂРёСЃРѕРІРєР° С‚РµРєСЃС‚Р° РЅР° СЌРєСЂР°РЅРµ
     void DrawText(int x, int y, const std::wstring& text, COLORREF color) override {
-        HDC hdc = GetDC(hwnd);  // Получаем контекст устройства
-        SetTextColor(hdc, color);  // Устанавливаем цвет текста
-        TextOut(hdc, x, y, text.c_str(), static_cast<int>(text.length()));  // Отрисовываем текст
-        ReleaseDC(hwnd, hdc);  // Освобождаем контекст устройства
+        HDC hdc = GetDC(hwnd);  // РџРѕР»СѓС‡Р°РµРј РєРѕРЅС‚РµРєСЃС‚ СѓСЃС‚СЂРѕР№СЃС‚РІР°
+        SetTextColor(hdc, color);  // РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј С†РІРµС‚ С‚РµРєСЃС‚Р°
+        TextOut(hdc, x, y, text.c_str(), static_cast<int>(text.length()));  // РћС‚СЂРёСЃРѕРІС‹РІР°РµРј С‚РµРєСЃС‚
+        ReleaseDC(hwnd, hdc);  // РћСЃРІРѕР±РѕР¶РґР°РµРј РєРѕРЅС‚РµРєСЃС‚ СѓСЃС‚СЂРѕР№СЃС‚РІР°
     }
 
-    // Обработка сообщений и событий окна
+    // РћР±СЂР°Р±РѕС‚РєР° СЃРѕРѕР±С‰РµРЅРёР№ Рё СЃРѕР±С‹С‚РёР№ РѕРєРЅР°
     void ProcessEvents() override {
         MSG msg;
-        while (PeekMessage(&msg, hwnd, 0, 0, PM_REMOVE)) {  // Проверка на наличие сообщений
+        while (PeekMessage(&msg, hwnd, 0, 0, PM_REMOVE)) {  // РџСЂРѕРІРµСЂРєР° РЅР° РЅР°Р»РёС‡РёРµ СЃРѕРѕР±С‰РµРЅРёР№
             TranslateMessage(&msg);
-            DispatchMessage(&msg);  // Обработка сообщений
+            DispatchMessage(&msg);  // РћР±СЂР°Р±РѕС‚РєР° СЃРѕРѕР±С‰РµРЅРёР№
         }
     }
 
-    // Проверка, нужно ли завершить выполнение (например, по нажатию клавиши Escape)
+    // РџСЂРѕРІРµСЂРєР°, РЅСѓР¶РЅРѕ Р»Рё Р·Р°РІРµСЂС€РёС‚СЊ РІС‹РїРѕР»РЅРµРЅРёРµ (РЅР°РїСЂРёРјРµСЂ, РїРѕ РЅР°Р¶Р°С‚РёСЋ РєР»Р°РІРёС€Рё Escape)
     bool ShouldQuit() const override {
-        return (GetAsyncKeyState(VK_ESCAPE) & 0x8000);  // Проверяем состояние клавиши Escape
+        return (GetAsyncKeyState(VK_ESCAPE) & 0x8000);  // РџСЂРѕРІРµСЂСЏРµРј СЃРѕСЃС‚РѕСЏРЅРёРµ РєР»Р°РІРёС€Рё Escape
     }
 
-    // Возвращает ширину окна
+    // Р’РѕР·РІСЂР°С‰Р°РµС‚ С€РёСЂРёРЅСѓ РѕРєРЅР°
     int GetWidth() const override {
-        return static_cast<int>(width);  // Возвращаем ширину окна как int
+        return static_cast<int>(width);  // Р’РѕР·РІСЂР°С‰Р°РµРј С€РёСЂРёРЅСѓ РѕРєРЅР° РєР°Рє int
     }
 
-    // Возвращает высоту окна
+    // Р’РѕР·РІСЂР°С‰Р°РµС‚ РІС‹СЃРѕС‚Сѓ РѕРєРЅР°
     int GetHeight() const override {
-        return static_cast<int>(height);  // Возвращаем высоту окна как int
+        return static_cast<int>(height);  // Р’РѕР·РІСЂР°С‰Р°РµРј РІС‹СЃРѕС‚Сѓ РѕРєРЅР° РєР°Рє int
     }
 
 protected:
-    HWND hwnd;  // Дескриптор окна
-    HINSTANCE hInstance;  // Дескриптор приложения
-    size_t width, height;  // Ширина и высота окна
+    HWND hwnd;  // Р”РµСЃРєСЂРёРїС‚РѕСЂ РѕРєРЅР°
+    HINSTANCE hInstance;  // Р”РµСЃРєСЂРёРїС‚РѕСЂ РїСЂРёР»РѕР¶РµРЅРёСЏ
+    size_t width, height;  // РЁРёСЂРёРЅР° Рё РІС‹СЃРѕС‚Р° РѕРєРЅР°
 
-    // Статическая функция для обработки сообщений окна
+    // РЎС‚Р°С‚РёС‡РµСЃРєР°СЏ С„СѓРЅРєС†РёСЏ РґР»СЏ РѕР±СЂР°Р±РѕС‚РєРё СЃРѕРѕР±С‰РµРЅРёР№ РѕРєРЅР°
     static LRESULT CALLBACK StaticWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
         if (uMsg == WM_NCCREATE) {
             CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
             WindowsCanvas* pCanvas = reinterpret_cast<WindowsCanvas*>(pCreate->lpCreateParams);
-            SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)pCanvas);  // Сохраняем указатель на объект Canvas
+            SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)pCanvas);  // РЎРѕС…СЂР°РЅСЏРµРј СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РѕР±СЉРµРєС‚ Canvas
         }
         else {
             WindowsCanvas* pCanvas = reinterpret_cast<WindowsCanvas*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
             if (pCanvas && uMsg == WM_DESTROY) {
-                PostQuitMessage(0);  // Закрываем окно
+                PostQuitMessage(0);  // Р—Р°РєСЂС‹РІР°РµРј РѕРєРЅРѕ
                 return 0;
             }
         }
-        return DefWindowProc(hwnd, uMsg, wParam, lParam);  // Обрабатываем стандартные сообщения
+        return DefWindowProc(hwnd, uMsg, wParam, lParam);  // РћР±СЂР°Р±Р°С‚С‹РІР°РµРј СЃС‚Р°РЅРґР°СЂС‚РЅС‹Рµ СЃРѕРѕР±С‰РµРЅРёСЏ
     }
 };
 
-// Заглушка для LinuxCanvas (реализуем только вывод в консоль)
+// Р—Р°РіР»СѓС€РєР° РґР»СЏ LinuxCanvas (СЂРµР°Р»РёР·СѓРµРј С‚РѕР»СЊРєРѕ РІС‹РІРѕРґ РІ РєРѕРЅСЃРѕР»СЊ)
 class LinuxCanvas : public PlatformCanvas {
 public:
-    LinuxCanvas() {}
-
-    void Initialize(size_t width, size_t height, const std::wstring& title) override {
-        std::wcout << L"LinuxCanvas: Инициализация окна " << title << L" (" << width << L"x" << height << L")" << std::endl;
-    }
-
-    void Clear() override {
-        std::wcout << L"LinuxCanvas: Очистка экрана" << std::endl;
-    }
-
-    void PutPixel(int x, int y, COLORREF color) override {
-        std::wcout << L"LinuxCanvas: Установка пикселя (" << x << L", " << y << L") цвет: " << color << std::endl;
-    }
-
-    void DrawText(int x, int y, const std::wstring& text, COLORREF color) override {
-        std::wcout << L"LinuxCanvas: Отрисовка текста '" << text << L"' в позиции (" << x << L", " << y << L") цвет: " << color << std::endl;
-    }
-
-    void ProcessEvents() override {
-        // Здесь должна быть обработка событий для Linux
-    }
-
-    bool ShouldQuit() const override {
-        return false;
-    }
-
-    int GetWidth() const override {
-        return 800;  // Заглушка для Linux
-    }
-
-    int GetHeight() const override {
-        return 600;  // Заглушка для Linux
-    }
+    LinuxCanvas() {};
 };
 
-// Класс Canvas, который использует PlatformCanvas для рисования на экране.
+// РљР»Р°СЃСЃ Canvas, РєРѕС‚РѕСЂС‹Р№ РёСЃРїРѕР»СЊР·СѓРµС‚ PlatformCanvas РґР»СЏ СЂРёСЃРѕРІР°РЅРёСЏ РЅР° СЌРєСЂР°РЅРµ.
 class Canvas {
 public:
-    // Конструктор принимает платформенный класс, который будет использоваться для рисования.
+    // РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РїСЂРёРЅРёРјР°РµС‚ РїР»Р°С‚С„РѕСЂРјРµРЅРЅС‹Р№ РєР»Р°СЃСЃ, РєРѕС‚РѕСЂС‹Р№ Р±СѓРґРµС‚ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ РґР»СЏ СЂРёСЃРѕРІР°РЅРёСЏ.
     Canvas(PlatformCanvas* platformCanvas) : platformCanvas(platformCanvas), clearScreen(true) {}
 
-    // Основной цикл приложения, где происходит отрисовка.
+    // РћСЃРЅРѕРІРЅРѕР№ С†РёРєР» РїСЂРёР»РѕР¶РµРЅРёСЏ, РіРґРµ РїСЂРѕРёСЃС…РѕРґРёС‚ РѕС‚СЂРёСЃРѕРІРєР°.
     void Run(std::function<void(Canvas&)> drawFunc, int targetFPS) {
-        platformCanvas->Initialize(800, 600, L"Canvas Application");  // Инициализация окна с размерами 800x600
+        platformCanvas->Initialize(800, 600, L"Canvas Application");  // РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РѕРєРЅР° СЃ СЂР°Р·РјРµСЂР°РјРё 800x600
 
-        auto frameDuration = std::chrono::milliseconds(1000 / targetFPS);  // Вычисление продолжительности одного кадра
+        auto frameDuration = std::chrono::milliseconds(1000 / targetFPS);  // Р’С‹С‡РёСЃР»РµРЅРёРµ РїСЂРѕРґРѕР»Р¶РёС‚РµР»СЊРЅРѕСЃС‚Рё РѕРґРЅРѕРіРѕ РєР°РґСЂР°
         auto lastTime = std::chrono::high_resolution_clock::now();
         int frameCount = 0;
 
         while (true) {
-            platformCanvas->ProcessEvents();  // Обработка событий
+            platformCanvas->ProcessEvents();  // РћР±СЂР°Р±РѕС‚РєР° СЃРѕР±С‹С‚РёР№
             if (platformCanvas->ShouldQuit()) {
-                break;  // Выход из цикла, если нужно завершить программу
+                break;  // Р’С‹С…РѕРґ РёР· С†РёРєР»Р°, РµСЃР»Рё РЅСѓР¶РЅРѕ Р·Р°РІРµСЂС€РёС‚СЊ РїСЂРѕРіСЂР°РјРјСѓ
             }
 
             if (clearScreen) {
-                platformCanvas->Clear();  // Очистка экрана
+                platformCanvas->Clear();  // РћС‡РёСЃС‚РєР° СЌРєСЂР°РЅР°
             }
 
-            drawFunc(*this);  // Вызов переданной функции для рисования
+            drawFunc(*this);  // Р’С‹Р·РѕРІ РїРµСЂРµРґР°РЅРЅРѕР№ С„СѓРЅРєС†РёРё РґР»СЏ СЂРёСЃРѕРІР°РЅРёСЏ
             frameCount++;
 
-            std::this_thread::sleep_for(frameDuration);  // Ограничение FPS
+            std::this_thread::sleep_for(frameDuration);  // РћРіСЂР°РЅРёС‡РµРЅРёРµ FPS
         }
     }
 
-    // Очистка экрана
+    // РћС‡РёСЃС‚РєР° СЌРєСЂР°РЅР°
     void Clear() {
         platformCanvas->Clear();
     }
 
-    // Переключатель режима очистки экрана (например, чтобы не очищать экран каждый раз)
+    // РџРµСЂРµРєР»СЋС‡Р°С‚РµР»СЊ СЂРµР¶РёРјР° РѕС‡РёСЃС‚РєРё СЌРєСЂР°РЅР° (РЅР°РїСЂРёРјРµСЂ, С‡С‚РѕР±С‹ РЅРµ РѕС‡РёС‰Р°С‚СЊ СЌРєСЂР°РЅ РєР°Р¶РґС‹Р№ СЂР°Р·)
     void ToggleClearScreen() {
         clearScreen = !clearScreen;
     }
 
-    // Получение ширины окна
+    // РџРѕР»СѓС‡РµРЅРёРµ С€РёСЂРёРЅС‹ РѕРєРЅР°
     int GetWidth() const {
-        return platformCanvas->GetWidth();  // Вызываем метод платформенного класса
+        return platformCanvas->GetWidth();  // Р’С‹Р·С‹РІР°РµРј РјРµС‚РѕРґ РїР»Р°С‚С„РѕСЂРјРµРЅРЅРѕРіРѕ РєР»Р°СЃСЃР°
     }
 
-    // Получение высоты окна
+    // РџРѕР»СѓС‡РµРЅРёРµ РІС‹СЃРѕС‚С‹ РѕРєРЅР°
     int GetHeight() const {
-        return platformCanvas->GetHeight();  // Вызываем метод платформенного класса
+        return platformCanvas->GetHeight();  // Р’С‹Р·С‹РІР°РµРј РјРµС‚РѕРґ РїР»Р°С‚С„РѕСЂРјРµРЅРЅРѕРіРѕ РєР»Р°СЃСЃР°
     }
 
 
-    // Установка пикселя на экране
-    void PutPixel(int x, int y, COLORREF color) {
+    // РЈСЃС‚Р°РЅРѕРІРєР° РїРёРєСЃРµР»СЏ РЅР° СЌРєСЂР°РЅРµ
+    void PutPixel(int x, int y, rgb_color color) {
         platformCanvas->PutPixel(
             GetWidth() / 2 + x,
             GetHeight() / 2 + y,
@@ -219,8 +203,8 @@ public:
     }
 
 private:
-    PlatformCanvas* platformCanvas;  // Указатель на платформенный класс для рисования
-    bool clearScreen;  // Флаг, указывающий, нужно ли очищать экран при каждом кадре
+    PlatformCanvas* platformCanvas;  // РЈРєР°Р·Р°С‚РµР»СЊ РЅР° РїР»Р°С‚С„РѕСЂРјРµРЅРЅС‹Р№ РєР»Р°СЃСЃ РґР»СЏ СЂРёСЃРѕРІР°РЅРёСЏ
+    bool clearScreen;  // Р¤Р»Р°Рі, СѓРєР°Р·С‹РІР°СЋС‰РёР№, РЅСѓР¶РЅРѕ Р»Рё РѕС‡РёС‰Р°С‚СЊ СЌРєСЂР°РЅ РїСЂРё РєР°Р¶РґРѕРј РєР°РґСЂРµ
 };
 
 

@@ -47,6 +47,7 @@ using namespace math;
 using namespace my_fun;
 // namespace canvas;
 
+
 int* interpolated(int i0, int d0, int i1, int d1, int& size) {
     size = abs(i1 - i0) + 1; // Количество интерполированных значений
     int* values = new int[size]; // Создаем массив нужного размера
@@ -65,7 +66,8 @@ int* interpolated(int i0, int d0, int i1, int d1, int& size) {
     return values; // Возвращаем массив
 }
 
-void DrawLine(Canvas canvas, point_2D<int> P0, point_2D<int> P1, COLORREF color = RGB(0, 0, 0)) {
+// отрисовка линиц
+void DrawLine(Canvas canvas, point_2D<int> P0, point_2D<int> P1, rgb_color color = rgb_color(0, 0, 0)) {
     int dx = P1.x - P0.x;
     int dy = P1.y - P0.y;
 
@@ -101,7 +103,8 @@ void DrawLine(Canvas canvas, point_2D<int> P0, point_2D<int> P1, COLORREF color 
     }
 }
 
-void DrawWireframeTringle(Canvas canvas, point_2D<int> P0, point_2D<int> P1, point_2D<int> P2, COLORREF color = RGB(0, 0, 0))
+// отрисовка пустого треугольника 
+void DrawWireframeTringle(Canvas canvas, point_2D<int> P0, point_2D<int> P1, point_2D<int> P2, rgb_color color = rgb_color(0, 0, 0))
 {
     DrawLine(canvas, P0, P1, color);
     DrawLine(canvas, P1, P2, color);
@@ -109,7 +112,8 @@ void DrawWireframeTringle(Canvas canvas, point_2D<int> P0, point_2D<int> P1, poi
 
 }
 
-void DrawCircle(Canvas canvas, int centerX, int centerY, int radius, COLORREF color = RGB(0, 0, 0)) {
+// отрисовка круга
+void DrawCircle(Canvas canvas, int centerX, int centerY, int radius, rgb_color color = rgb_color(0, 0, 0)) {
     for (int angle = 0; angle < 360; angle++) {
         int x = centerX + static_cast<int>(radius * cos(angle * 3.14159 / 180));
         int y = centerY + static_cast<int>(radius * sin(angle * 3.14159 / 180));
@@ -126,7 +130,7 @@ void DrawExample(Canvas& canvas) {
     int centerY = 150;
     int radius = 50;
 
-    DrawCircle(canvas, centerX, centerY, radius, RGB(0, 255, 0));
+    DrawCircle(canvas, centerX, centerY, radius, rgb_color(0, 0, 0));
     angle = (angle + 5) % 360;
 
     DrawWireframeTringle(
@@ -139,11 +143,8 @@ void DrawExample(Canvas& canvas) {
 
 // Главная функция
 int main() {
-#ifdef _WIN32
+
     WindowsCanvas* platformCanvas = new WindowsCanvas();
-#elif __linux__
-    LinuxCanvas* platformCanvas = new LinuxCanvas();
-#endif
 
     Canvas canvas(platformCanvas); // Передаем платформенный класс в Canvas
     canvas.Run(DrawExample, 600); // Запускаем отрисовку
