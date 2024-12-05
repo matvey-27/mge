@@ -150,12 +150,6 @@ public:
 
     // Основной цикл приложения, где происходит отрисовка.
     void Run(std::function<void(Canvas&)> drawFunc, int targetFPS) {
-        platformCanvas->Initialize(800, 600, L"Canvas Application");  // Инициализация окна с размерами 800x600
-
-        auto frameDuration = std::chrono::milliseconds(1000 / targetFPS);  // Вычисление продолжительности одного кадра
-        auto lastTime = std::chrono::high_resolution_clock::now();
-        int frameCount = 0;
-
         while (true) {
             platformCanvas->ProcessEvents();  // Обработка событий
             if (platformCanvas->ShouldQuit()) {
@@ -167,9 +161,6 @@ public:
             }
 
             drawFunc(*this);  // Вызов переданной функции для рисования
-            frameCount++;
-
-            std::this_thread::sleep_for(frameDuration);  // Ограничение FPS
         }
     }
 

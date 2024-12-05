@@ -22,6 +22,7 @@ namespace math {
     public:
         Point2D() : x(0), y(0) {}
         Point2D(T x, T y) : x(x), y(y) {};
+        ~Point2D() = default;
 
         void print_position();//Вывод точки в консоль
     };
@@ -33,6 +34,7 @@ namespace math {
     public:
         Point3D() : Point2D<T>(0, 0), z(0) {};
         Point3D(T x, T y, T z) : Point2D<T>(x, y), z(z) {};
+        ~Point3D() = default;
 
         Vector3D<T> operator-(Point3D<T> p); //Вычетание точек
 
