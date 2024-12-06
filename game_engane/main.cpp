@@ -1,12 +1,11 @@
 #include"main.h"
 
 // НУЖНО СДЕЛАТЬ КЛАСС ТРЕУГОЛЬНИКОВ и исправить функции и классы RenderTriengle() RenderObject() Model()
-Point2D<int> ViewportToCanvas(Point2D<int> p, int d = 50, int Cw = 80, int Vw = 800, int Ch = 60, int Vh = 600) {
+Point2D<int> ViewportToCanvas(Point2D<int> p, int d = 1, int Cw = 800, int Vw = 800, int Ch = 600, int Vh = 600) {
     return Point2D<int>(p.x * Cw/Vw, p.y * Ch/Vh);
 }
 
-
-Point2D<int> ProjectVertex(Point3D<int> v, int d = 150){
+Point2D<int> ProjectVertex(Point3D<int> v, int d = 200){
     return ViewportToCanvas(Point2D<int>(v.x * d / v.z, v.y * d / v.z), d);
 }
 
@@ -14,12 +13,11 @@ void RenderTriengle(Canvas& canvas, Point3D<int> triangle, Point2D<int>* project
     DrawWireframeTringle(canvas,
                         project[triangle.x],
                         project[triangle.y],
-                        project[triangle.z]
-                        );
+                        project[triangle.z]);
 }
 
 void RenderObject(Canvas& canvas, Model& model) {
-    Point2D<int>* projected{};
+    Point2D<int>* projected = new Point2D<int>[0];
     int size = 0;
 
     for (int i = 0; i < model.getVertexCount(); i++) {
@@ -29,7 +27,7 @@ void RenderObject(Canvas& canvas, Model& model) {
     for (int i = 0; i < model.getTrianglsCount(); i++) {
         RenderTriengle(canvas, model.getTriangls(i), projected);
     }
-
+    
     delete[] projected;
 }
 
@@ -92,7 +90,7 @@ void DrawExample(Canvas& canvas) {
 
     Model cube(vertices, 8, triangles, 12);
 
-    cube.translate(5, 2, 0);
+    cube.translate(Vector3D<int>(-5, 0, 5));
 
     RenderObject(canvas, cube);
 }

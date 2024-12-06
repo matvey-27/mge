@@ -167,6 +167,12 @@ public:
             vertices[i].z += dz;
         }
     }
+
+    void translate(Vector3D<int> v) {
+        for (size_t i = 0; i < count_v; i+=1) {
+            vertices[i] += v;
+        }
+    }
 };
 
 int* interpolated(int i0, int d0, int i1, int d1, int& size) {

@@ -1,5 +1,13 @@
 #pragma once
 
+//ПОМЕНЯТЬ ОПЕРАТОРЫ В ПРИМЕР КОД НИЖЕ 
+//Point3D<T>& operator+=(const Vector3D<T>& v) {
+//    this->x += v.x;
+//    this->y += v.y;
+//    this->z += v.z;
+//    return *this; // Возвращаем this
+//}
+
 namespace math {
     template <typename T>
     class Vector2D; // Предварительное объявление класса Vector2D
@@ -35,6 +43,14 @@ namespace math {
         Point3D() : Point2D<T>(0, 0), z(0) {};
         Point3D(T x, T y, T z) : Point2D<T>(x, y), z(z) {};
         ~Point3D() = default;
+
+        // Оператор += для добавления вектора
+        Point3D<T>& operator+=(const Vector3D<T>& v) {
+            this->x += v.x;
+            this->y += v.y;
+            this->z += v.z;
+            return *this; // Возвращаем this
+        }
 
         Vector3D<T> operator-(Point3D<T> p); //Вычетание точек
 
