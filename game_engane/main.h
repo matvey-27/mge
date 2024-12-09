@@ -1,4 +1,5 @@
 #pragma once
+#include <cmath>
 #include "math/math.h"
 #include "canvas/windows/canvas.h"
 
@@ -75,6 +76,7 @@ int* interpolated(int i0, int d0, int i1, int d1, int& size) {
     }
 
     return values; // Возвращаем массив
+    delete[] values;
 }
 
 // отрисовка линиц

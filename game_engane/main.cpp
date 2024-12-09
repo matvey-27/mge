@@ -116,15 +116,33 @@ public:
     }
 };
 
+template <typename T>
+Vector3D<T> move(Vector3D<T>, float a) {
+};
+template <typename T>
+Point3D<T> rotateX(Point3D<T> p, float a) {
+    
+
+    float mx1[3]{ 1, 0, 0 }; // 1st row
+    float mx2[3]{ 0, cos(a), -sin(a) }; // 2nd row
+    float mx3[3]{ 0, sin(a), cos(a) }; // 3rd row
+
+    return Point3D<T>(
+        p.x * mx1[0] + p.y * mx1[1] + p.z * mx1[2], // x' = x  1 + y  0 + z  0
+        p.x * mx2[0] + p.y * mx2[1] + p.z * mx2[2], // y' = x  0 + y  cos(a) + z  -sin(a)
+        p.x * mx3[0] + p.y * mx3[1] + p.z * mx3[2]  // z' = x  0 + y  sin(a) + z  cos(a)
+    );
+}
 
 // НУЖНО СДЕЛАТЬ КЛАСС ТРЕУГОЛЬНИКОВ и исправить функции и классы RenderTriengle() RenderObject() Model()
 Point2D<int> ViewportToCanvas(Point2D<float> p, int Cw = 800, int Vw = 800, int Ch = 600, int Vh = 600) {
     return Point2D<int>((int)p.x * Cw/Vw, (int)p.y * Ch/Vh);
 }
 
-Point2D<int> ProjectVertex(Point3D<float> v, float d = 200.0){
+Point2D<int> ProjectVertex(Point3D<float> v, float d = 150.0){
     return ViewportToCanvas(Point2D<float>(v.x * d / v.z, v.y * d / v.z));
 }
+
 
 void RenderTriengle(Canvas& canvas, Point3D<int> triangle, Point2D<int>* project) {
     DrawWireframeTringle(canvas,
@@ -133,12 +151,12 @@ void RenderTriengle(Canvas& canvas, Point3D<int> triangle, Point2D<int>* project
                         project[triangle.z]);
 }
 
-void RenderObject(Canvas& canvas, Model& model) {
+void RenderObject(Canvas& canvas, Model& model, int a) {
     Point2D<int>* projected = new Point2D<int>[0];
     int size = 0;
 
     for (int i = 0; i < model.getVertexCount(); i++) {
-        addElement(projected, size, ProjectVertex(model.getVertex(i)));
+        addElement(projected, size, ProjectVertex(rotateX(model.getVertex(i), a)));
     }
 
     for (int i = 0; i < model.getTrianglsCount(); i++) {
@@ -177,10 +195,22 @@ void DrawExample(Canvas& canvas) {
 
     Model cube(vertices, 8, triangles, 12);
 
-    cube.translate(Vector3D<float>(-5, 0, 5));
+    if (canvas.safe_data == 100) {
+        canvas.safe_data = 50;
+    }
+    else {
+        canvas.safe_data += 1;
+    }
+    
+    int a = canvas.safe_data;
 
-    RenderObject(canvas, cube);
+    cube.translate(Vector3D<float>(0, 0, 5));
+
+    RenderObject(canvas, cube, a);
+
+    Sleep(1000);
 }
+
 
 // Главная функция
 int main() {

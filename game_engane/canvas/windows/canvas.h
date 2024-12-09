@@ -123,6 +123,8 @@ namespace canvas {
     // Класс Canvas, который использует PlatformCanvas для рисования на экране.
     class Canvas {
     public:
+        int safe_data = 0;
+
         Canvas(size_t width = 800, size_t height = 600, const std::wstring& title = L"ddd") {
             platformCanvas = new WindowsCanvas();
             clearScreen = true;
