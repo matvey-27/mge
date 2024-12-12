@@ -1,5 +1,4 @@
-#include "math.h"
-#include <iostream>
+#include "Point.h"
 
 using namespace std;
 using namespace math;

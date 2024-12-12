@@ -1,12 +1,9 @@
-#include "math.h"
-#include <iostream>
-#include <cmath>
+#include "Vector.h"
 
 using namespace std;
 using namespace math;
 
 // Vector2D
-
 template <typename T>
 void Vector2D<T>::print_vector() {
     // Вывод координат вектора
@@ -15,7 +12,6 @@ void Vector2D<T>::print_vector() {
 }
 
 // Vector3D
-
 template <typename T>
 void Vector3D<T>::print_vector() {
     // Вывод координат вектора
@@ -25,7 +21,6 @@ void Vector3D<T>::print_vector() {
 }
 
 // Оператор сложения векторов
-
 template <typename T>
 Point3D<T> Vector3D<T>::operator+(Point3D<T> p) {
     // Сложение координат векторов
@@ -37,7 +32,6 @@ Point3D<T> Vector3D<T>::operator+(Point3D<T> p) {
 }
 
 // Оператор сложения векторов
-
 template <typename T>
 Vector3D<T> Vector3D<T>::operator+(Vector3D<T> vec) {
     // Сложение координат векторов
@@ -47,7 +41,6 @@ Vector3D<T> Vector3D<T>::operator+(Vector3D<T> vec) {
 }
 
 // Оператор умножения вектора на скаляр
-
 template <typename T>
 Vector3D<T> Vector3D<T>::operator*(T num) {
     // Умножение координат вектора на скаляр
@@ -57,7 +50,6 @@ Vector3D<T> Vector3D<T>::operator*(T num) {
 }
 
 // Длина вектора
-
 template <typename T>
 T Vector3D<T>::length() {
     // Вычисление длины вектора
@@ -65,7 +57,6 @@ T Vector3D<T>::length() {
 }
 
 // Скалярное произведение векторов
-
 template <typename T>
 T Vector3D<T>::scoliar_product(Vector3D<T> vec) {
     // Вычисление скалярного произведения векторов
@@ -73,7 +64,6 @@ T Vector3D<T>::scoliar_product(Vector3D<T> vec) {
 }
 
 // Векторное произведение векторов
-
 template <typename T>
 Vector3D<T> Vector3D<T>::vector_product(Vector3D<T> vec) {
     // Вычисление векторного произведения векторов

@@ -13,33 +13,63 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Исходные файлы\math">
-      <UniqueIdentifier>{3a9c9e0b-b9f6-4727-bdca-6af629fe0b87}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Исходные файлы\canvas">
       <UniqueIdentifier>{091de6ac-e204-4c88-a099-f6445c964bc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\render">
+      <UniqueIdentifier>{cd498567-9b65-4dcb-af1e-e46a393c4b9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Render">
+      <UniqueIdentifier>{56b2d7fa-a1a7-4fce-a781-66dfb9b323af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Math">
+      <UniqueIdentifier>{9f199407-ce09-4721-831d-679be4a0b5d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Math">
+      <UniqueIdentifier>{3a9c9e0b-b9f6-4727-bdca-6af629fe0b87}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="math\point.cpp">
-      <Filter>Исходные файлы\math</Filter>
+    <ClCompile Include="math\Point.cpp">
+      <Filter>Исходные файлы\Math</Filter>
     </ClCompile>
-    <ClCompile Include="math\vector.cpp">
-      <Filter>Исходные файлы\math</Filter>
+    <ClCompile Include="math\Vector.cpp">
+      <Filter>Исходные файлы\Math</Filter>
     </ClCompile>
     <ClCompile Include="canvas\canvas.cpp">
       <Filter>Исходные файлы\canvas</Filter>
     </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Исходные файлы\render</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="math\math.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="canvas\canvas.h">
       <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Файлы заголовков\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderUtils.h">
+      <Filter>Файлы заголовков\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="math\math.h">
+      <Filter>Файлы заголовков\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Point.h">
+      <Filter>Файлы заголовков\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="math\Vector.h">
+      <Filter>Файлы заголовков\Math</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
