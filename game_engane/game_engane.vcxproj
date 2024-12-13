@@ -23,16 +23,17 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math\Point.cpp" />
     <ClCompile Include="math\Vector.cpp" />
-    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="render\Model.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="canvas\canvas.h" />
+    <ClInclude Include="main.h" />
     <ClInclude Include="math\math.h" />
     <ClInclude Include="math\Point.h" />
     <ClInclude Include="math\Vector.h" />
-    <ClInclude Include="Model.h" />
-    <ClInclude Include="RenderUtils.h" />
+    <ClInclude Include="render\Model.h" />
+    <ClInclude Include="render\RenderUtils.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

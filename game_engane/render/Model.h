@@ -1,8 +1,8 @@
 #pragma once
-#include"math/Vector.h"
-#include "math/Point.h"
-#include"Utils.h"
-#include<iostream>
+#include "../math/Vector.h"
+#include "../math/Point.h"
+#include "../Utils.h"
+#include <iostream>
 
 using namespace my_fun;
 using namespace math;

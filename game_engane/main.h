@@ -2,8 +2,8 @@
 #include <cmath>
 #include "math/Vector.h"
 #include "math/Point.h"
-#include "RenderUtils.h"
-#include "Model.h"
+#include "render/RenderUtils.h"
+#include "render/Model.h"
 #include "canvas/windows/canvas.h"
 #include "Utils.h"
 

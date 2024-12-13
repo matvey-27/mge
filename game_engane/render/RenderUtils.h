@@ -1,10 +1,10 @@
 #pragma once
 #include <cmath>
 #include "Model.h"
-#include"math/Vector.h"
-#include "math/Point.h"
-#include "canvas/windows/canvas.h"
-#include "Utils.h"
+#include "../math/Vector.h"
+#include "../math/Point.h"
+#include "../canvas/windows/canvas.h"
+#include "../Utils.h"
 
 using namespace std;
 using namespace math;

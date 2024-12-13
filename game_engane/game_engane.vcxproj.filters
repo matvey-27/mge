@@ -16,9 +16,6 @@
     <Filter Include="Исходные файлы\canvas">
       <UniqueIdentifier>{091de6ac-e204-4c88-a099-f6445c964bc4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Исходные файлы\render">
-      <UniqueIdentifier>{cd498567-9b65-4dcb-af1e-e46a393c4b9a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Файлы заголовков\Render">
       <UniqueIdentifier>{56b2d7fa-a1a7-4fce-a781-66dfb9b323af}</UniqueIdentifier>
     </Filter>
@@ -27,6 +24,9 @@
     </Filter>
     <Filter Include="Исходные файлы\Math">
       <UniqueIdentifier>{3a9c9e0b-b9f6-4727-bdca-6af629fe0b87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Render">
+      <UniqueIdentifier>{cd498567-9b65-4dcb-af1e-e46a393c4b9a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -42,22 +42,16 @@
     <ClCompile Include="canvas\canvas.cpp">
       <Filter>Исходные файлы\canvas</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Исходные файлы\render</Filter>
-    </ClCompile>
     <ClCompile Include="Utils.cpp">
       <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="render\Model.cpp">
+      <Filter>Исходные файлы\Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="canvas\canvas.h">
       <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Файлы заголовков\Render</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderUtils.h">
-      <Filter>Файлы заголовков\Render</Filter>
     </ClInclude>
     <ClInclude Include="math\math.h">
       <Filter>Файлы заголовков\Math</Filter>
@@ -70,6 +64,15 @@
     </ClInclude>
     <ClInclude Include="math\Vector.h">
       <Filter>Файлы заголовков\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Model.h">
+      <Filter>Файлы заголовков\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="render\RenderUtils.h">
+      <Filter>Файлы заголовков\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
