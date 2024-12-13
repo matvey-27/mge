@@ -3,12 +3,12 @@
 
 namespace math {
     template <typename T>
-    class Vector2D; // Предварительное объявление класса Vector2D
+    class Vector2D; // РџСЂРµРґРІР°СЂРёС‚РµР»СЊРЅРѕРµ РѕР±СЉСЏРІР»РµРЅРёРµ РєР»Р°СЃСЃР° Vector2D
 
     template <typename T>
-    class Vector3D; // Предварительное объявление класса Vector3D
+    class Vector3D; // РџСЂРµРґРІР°СЂРёС‚РµР»СЊРЅРѕРµ РѕР±СЉСЏРІР»РµРЅРёРµ РєР»Р°СЃСЃР° Vector3D
 
-    // Point3D и Point2D
+    // Point3D Рё Point2D
     template <typename T>
     class Point2D {
     public:
@@ -18,7 +18,7 @@ namespace math {
         Point2D(T x, T y) : x(x), y(y) {};
         ~Point2D() = default;
 
-        void print_position();//Вывод точки в консоль
+        void print_position();//Р’С‹РІРѕРґ С‚РѕС‡РєРё РІ РєРѕРЅСЃРѕР»СЊ
     };
 
     template <typename T>
@@ -30,16 +30,16 @@ namespace math {
         Point3D(T x, T y, T z) : Point2D<T>(x, y), z(z) {};
         ~Point3D() = default;
 
-        // Оператор += для добавления вектора
+        // РћРїРµСЂР°С‚РѕСЂ += РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ РІРµРєС‚РѕСЂР°
         Point3D<T>& operator+=(const Vector3D<T>& v) {
             this->x += v.x;
             this->y += v.y;
             this->z += v.z;
-            return *this; // Возвращаем this
+            return *this; // Р’РѕР·РІСЂР°С‰Р°РµРј this
         }
 
-        Vector3D<T> operator-(Point3D<T> p); //Вычетание точек
+        Vector3D<T> operator-(Point3D<T> p); //Р’С‹С‡РµС‚Р°РЅРёРµ С‚РѕС‡РµРє
 
-        void print_position();//Вывод точки в консоль
+        void print_position();//Р’С‹РІРѕРґ С‚РѕС‡РєРё РІ РєРѕРЅСЃРѕР»СЊ
     };
 }

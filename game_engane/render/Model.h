@@ -10,9 +10,9 @@ using namespace math;
 class Model {
 private:
     Point3D<float>* vertices;
-    size_t count_v; // Количество текущих вершин
+    size_t count_v; // РљРѕР»РёС‡РµСЃС‚РІРѕ С‚РµРєСѓС‰РёС… РІРµСЂС€РёРЅ
     Point3D<int>* triangles;
-    size_t count_t; // Количество текущих вершин
+    size_t count_t; // РљРѕР»РёС‡РµСЃС‚РІРѕ С‚РµРєСѓС‰РёС… РІРµСЂС€РёРЅ
 
 public:
     Model() : vertices(new Point3D<float>[0]), count_v(0), triangles(new Point3D<int>[0]), count_t(0) {};
@@ -25,22 +25,22 @@ public:
 
     Model& operator=(const Model& other);
 
-    // Метод для добавления новой вершины
+    // РњРµС‚РѕРґ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ РЅРѕРІРѕР№ РІРµСЂС€РёРЅС‹
     void addVertex(const Point3D<float>& point);
 
-    // Метод для получения количества вершин
+    // РњРµС‚РѕРґ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РєРѕР»РёС‡РµСЃС‚РІР° РІРµСЂС€РёРЅ
     size_t getVertexCount() const;
 
-    // Метод для доступа к вершине
+    // РњРµС‚РѕРґ РґР»СЏ РґРѕСЃС‚СѓРїР° Рє РІРµСЂС€РёРЅРµ
     Point3D<float>& getVertex(size_t index);
 
-    // Метод для добавления новой треугольников
+    // РњРµС‚РѕРґ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ РЅРѕРІРѕР№ С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРІ
     void addTriangls(const Point3D<int>& point);
 
-    // Метод для получения количества треугольников
+    // РњРµС‚РѕРґ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РєРѕР»РёС‡РµСЃС‚РІР° С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРІ
     size_t getTrianglsCount();
 
-    // Метод для доступа к треугольников
+    // РњРµС‚РѕРґ РґР»СЏ РґРѕСЃС‚СѓРїР° Рє С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРІ
     Point3D<int>& getTriangls(size_t index);
 
     void translate(int dx, int dy, int dz);

@@ -16,10 +16,10 @@ Model::Model(Point3D<float> vertices[], int count_v, Point3D<int> triangles[], i
 }
 
 Model::~Model() {
-    delete[] vertices; // Освобождение памяти
+    delete[] vertices; // РћСЃРІРѕР±РѕР¶РґРµРЅРёРµ РїР°РјСЏС‚Рё
     vertices = nullptr;
 
-    delete[] triangles; // Освобождение памяти
+    delete[] triangles; // РћСЃРІРѕР±РѕР¶РґРµРЅРёРµ РїР°РјСЏС‚Рё
     triangles = nullptr;
 }
 
@@ -57,17 +57,17 @@ Model& Model::operator=(const Model& other)
 }
 
 
-// Метод для добавления новой вершины
+// РњРµС‚РѕРґ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ РЅРѕРІРѕР№ РІРµСЂС€РёРЅС‹
 void Model::addVertex(const Point3D<float>& point) {
     addElement(vertices, count_v, point);
 }
 
-// Метод для получения количества вершин
+// РњРµС‚РѕРґ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РєРѕР»РёС‡РµСЃС‚РІР° РІРµСЂС€РёРЅ
 size_t Model::getVertexCount() const {
     return count_v;
 }
 
-// Метод для доступа к вершине
+// РњРµС‚РѕРґ РґР»СЏ РґРѕСЃС‚СѓРїР° Рє РІРµСЂС€РёРЅРµ
 Point3D<float>&  Model::getVertex(size_t index) {
     if (index >= count_v) {
         throw std::out_of_range("Index out of range");
@@ -75,18 +75,18 @@ Point3D<float>&  Model::getVertex(size_t index) {
     return vertices[index];
 }
 
-// Метод для добавления новой треугольников
+// РњРµС‚РѕРґ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ РЅРѕРІРѕР№ С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРІ
 void Model::addTriangls(const Point3D<int>& point) {
     addElement(triangles, count_t, point);
 }
 
-// Метод для получения количества треугольников
+// РњРµС‚РѕРґ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РєРѕР»РёС‡РµСЃС‚РІР° С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРІ
 size_t Model::getTrianglsCount()
 {
     return count_t;
 }
 
-// Метод для доступа к треугольников
+// РњРµС‚РѕРґ РґР»СЏ РґРѕСЃС‚СѓРїР° Рє С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРІ
 Point3D<int>& Model::getTriangls(size_t index) {
     if (index >= count_t) {
         throw std::out_of_range("Index out of range");
@@ -94,7 +94,7 @@ Point3D<int>& Model::getTriangls(size_t index) {
     return triangles[index];
 }
 
-// Метод для перемещения 
+// РњРµС‚РѕРґ РґР»СЏ РїРµСЂРµРјРµС‰РµРЅРёСЏ 
 void Model::translate(int dx, int dy, int dz) {
     for (size_t i = 0; i < count_v; ++i) {
         vertices[i].x += dx;
@@ -103,7 +103,7 @@ void Model::translate(int dx, int dy, int dz) {
     }
 }
 
-// Метод для перемещения 
+// РњРµС‚РѕРґ РґР»СЏ РїРµСЂРµРјРµС‰РµРЅРёСЏ 
 void Model::translate(Vector3D<float> v) {
     for (size_t i = 0; i < count_v; i += 1) {
         vertices[i] += v;

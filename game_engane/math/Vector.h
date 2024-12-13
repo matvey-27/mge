@@ -5,12 +5,12 @@
 
 namespace math {
     template <typename T>
-    class Point2D; // Предварительное объявление класса Point2D
+    class Point2D; // РџСЂРµРґРІР°СЂРёС‚РµР»СЊРЅРѕРµ РѕР±СЉСЏРІР»РµРЅРёРµ РєР»Р°СЃСЃР° Point2D
 
     template <typename T>
-    class Point3D; // Предварительное объявление класса Point3D
+    class Point3D; // РџСЂРµРґРІР°СЂРёС‚РµР»СЊРЅРѕРµ РѕР±СЉСЏРІР»РµРЅРёРµ РєР»Р°СЃСЃР° Point3D
 
-    // Vector3D и Vector2D
+    // Vector3D Рё Vector2D
 
     template <typename T>
     class Vector2D {
@@ -20,7 +20,7 @@ namespace math {
         Vector2D() : x(0), y(0) {}
         Vector2D(T x, T y) : x(x), y(y) {};
 
-        void print_vector();//Вывод вектора в консоль
+        void print_vector();//Р’С‹РІРѕРґ РІРµРєС‚РѕСЂР° РІ РєРѕРЅСЃРѕР»СЊ
     };
 
     template <typename T>
@@ -30,17 +30,17 @@ namespace math {
         Vector3D() : Vector2D<T>(0, 0), z(0) {};
         Vector3D(T x, T y, T z) : Vector2D<T>(x, y), z(z) {};
 
-        void print_vector(); //Вывод вектора в консоль
+        void print_vector(); //Р’С‹РІРѕРґ РІРµРєС‚РѕСЂР° РІ РєРѕРЅСЃРѕР»СЊ
 
-        Point3D<T> operator+(Point3D<T> p); //Сложение точки и вектора
+        Point3D<T> operator+(Point3D<T> p); //РЎР»РѕР¶РµРЅРёРµ С‚РѕС‡РєРё Рё РІРµРєС‚РѕСЂР°
 
-        Vector3D<T> operator+(Vector3D<T> vec); //Сложение векторов
+        Vector3D<T> operator+(Vector3D<T> vec); //РЎР»РѕР¶РµРЅРёРµ РІРµРєС‚РѕСЂРѕРІ
 
-        Vector3D<T> operator*(T num); // Умножение вектора на число
+        Vector3D<T> operator*(T num); // РЈРјРЅРѕР¶РµРЅРёРµ РІРµРєС‚РѕСЂР° РЅР° С‡РёСЃР»Рѕ
 
-        T length(); // Метод для нахождения модуля(длина) вектора
+        T length(); // РњРµС‚РѕРґ РґР»СЏ РЅР°С…РѕР¶РґРµРЅРёСЏ РјРѕРґСѓР»СЏ(РґР»РёРЅР°) РІРµРєС‚РѕСЂР°
 
-        T scoliar_product(Vector3D<T> vec); // Скалярное произведение
-        Vector3D<T> vector_product(Vector3D<T> vec); // Векторное произведение
+        T scoliar_product(Vector3D<T> vec); // РЎРєР°Р»СЏСЂРЅРѕРµ РїСЂРѕРёР·РІРµРґРµРЅРёРµ
+        Vector3D<T> vector_product(Vector3D<T> vec); // Р’РµРєС‚РѕСЂРЅРѕРµ РїСЂРѕРёР·РІРµРґРµРЅРёРµ
     };
 }

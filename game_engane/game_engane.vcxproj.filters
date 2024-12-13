@@ -28,6 +28,9 @@
     <Filter Include="Исходные файлы\Render">
       <UniqueIdentifier>{cd498567-9b65-4dcb-af1e-e46a393c4b9a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Файлы заголовков\Canvas">
+      <UniqueIdentifier>{35303134-66ff-4719-80b1-f32da4ce07d9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -50,9 +53,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="canvas\canvas.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="math\math.h">
       <Filter>Файлы заголовков\Math</Filter>
     </ClInclude>
@@ -73,6 +73,9 @@
     </ClInclude>
     <ClInclude Include="main.h">
       <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="canvas\canvas.h">
+      <Filter>Файлы заголовков\Canvas</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

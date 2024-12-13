@@ -12,25 +12,25 @@ using namespace my_fun;
 using namespace canvas;
 
 int* interpolated(int i0, int d0, int i1, int d1, int& size) {
-    size = abs(i1 - i0) + 1; // Количество интерполированных значений
-    int* values = new int[size]; // Создаем массив нужного размера
+    size = abs(i1 - i0) + 1; // РљРѕР»РёС‡РµСЃС‚РІРѕ РёРЅС‚РµСЂРїРѕР»РёСЂРѕРІР°РЅРЅС‹С… Р·РЅР°С‡РµРЅРёР№
+    int* values = new int[size]; // РЎРѕР·РґР°РµРј РјР°СЃСЃРёРІ РЅСѓР¶РЅРѕРіРѕ СЂР°Р·РјРµСЂР°
 
-    // Проверяем, если i0 равно i1
+    // РџСЂРѕРІРµСЂСЏРµРј, РµСЃР»Рё i0 СЂР°РІРЅРѕ i1
     if (i0 == i1) {
-        values[0] = d0; // Добавляем d0 в массив
+        values[0] = d0; // Р”РѕР±Р°РІР»СЏРµРј d0 РІ РјР°СЃСЃРёРІ
     }
     else {
         int delta = d1 - d0;
         for (int i = 0; i < size; ++i) {
-            values[i] = d0 + (delta * i) / (i1 - i0); // Линейная интерполяция
+            values[i] = d0 + (delta * i) / (i1 - i0); // Р›РёРЅРµР№РЅР°СЏ РёРЅС‚РµСЂРїРѕР»СЏС†РёСЏ
         }
     }
 
-    return values; // Возвращаем массив
+    return values; // Р’РѕР·РІСЂР°С‰Р°РµРј РјР°СЃСЃРёРІ
     delete[] values;
 }
 
-// отрисовка линиц
+// РѕС‚СЂРёСЃРѕРІРєР° Р»РёРЅРёС†
 void DrawLine(Canvas canvas, Point2D<int> P0, Point2D<int> P1, rgb_color color = rgb_color(0, 0, 0)) {
     int dx = P1.x - P0.x;
     int dy = P1.y - P0.y;
@@ -48,7 +48,7 @@ void DrawLine(Canvas canvas, Point2D<int> P0, Point2D<int> P1, rgb_color color =
             canvas.PutPixel(x, ys[i], color);
         }
 
-        delete[] ys; // Освобождаем память
+        delete[] ys; // РћСЃРІРѕР±РѕР¶РґР°РµРј РїР°РјСЏС‚СЊ
     }
     else {
         if (P0.y > P1.y) {
@@ -63,11 +63,11 @@ void DrawLine(Canvas canvas, Point2D<int> P0, Point2D<int> P1, rgb_color color =
             canvas.PutPixel(xs[i], y, color);
         }
 
-        delete[] xs; // Освобождаем память
+        delete[] xs; // РћСЃРІРѕР±РѕР¶РґР°РµРј РїР°РјСЏС‚СЊ
     }
 }
 
-// отрисовка пустого треугольника 
+// РѕС‚СЂРёСЃРѕРІРєР° РїСѓСЃС‚РѕРіРѕ С‚СЂРµСѓРіРѕР»СЊРЅРёРєР° 
 void DrawWireframeTringle(Canvas canvas, Point2D<int> P0, Point2D<int> P1, Point2D<int> P2, rgb_color color = rgb_color(0, 0, 0))
 {
     DrawLine(canvas, P0, P1, color);
@@ -76,12 +76,12 @@ void DrawWireframeTringle(Canvas canvas, Point2D<int> P0, Point2D<int> P1, Point
 
 }
 
-// отрисовка круга
+// РѕС‚СЂРёСЃРѕРІРєР° РєСЂСѓРіР°
 void DrawCircle(Canvas canvas, int centerX, int centerY, int radius, rgb_color color = rgb_color(0, 0, 0)) {
     for (int angle = 0; angle < 360; angle++) {
         int x = centerX + static_cast<int>(radius * cos(angle * 3.14159 / 180));
         int y = centerY + static_cast<int>(radius * sin(angle * 3.14159 / 180));
-        canvas.PutPixel(x, y, color);  // Рисуем каждый пиксель круга
+        canvas.PutPixel(x, y, color);  // Р РёСЃСѓРµРј РєР°Р¶РґС‹Р№ РїРёРєСЃРµР»СЊ РєСЂСѓРіР°
     }
 }
 
@@ -103,7 +103,7 @@ Point3D<T> rotateX(Point3D<T> p, float a) {
     );
 }
 
-// НУЖНО СДЕЛАТЬ КЛАСС ТРЕУГОЛЬНИКОВ и исправить функции и классы RenderTriengle() RenderObject() Model()
+// РќРЈР–РќРћ РЎР”Р•Р›РђРўР¬ РљР›РђРЎРЎ РўР Р•РЈР“РћР›Р¬РќРРљРћР’ Рё РёСЃРїСЂР°РІРёС‚СЊ С„СѓРЅРєС†РёРё Рё РєР»Р°СЃСЃС‹ RenderTriengle() RenderObject() Model()
 Point2D<int> ViewportToCanvas(Point2D<float> p, int Cw = 800, int Vw = 800, int Ch = 600, int Vh = 600) {
     return Point2D<int>((int)p.x * Cw / Vw, (int)p.y * Ch / Vh);
 }
