@@ -12,16 +12,16 @@
 namespace canvas {
     // класс цвета 
     class rgb_color {
-        public:
-            int r = 0;
-            int g = 0;
-            int b = 0;
+    public:
+        int r = 0;
+        int g = 0;
+        int b = 0;
 
-            rgb_color(int r, int g, int b) : r(r), g(g), b(b) {};
+        rgb_color(int r, int g, int b) : r(r), g(g), b(b) {};
 
-            COLORREF get_color_win() {
-                return RGB(r, g, b);
-            }
+        COLORREF get_color_win() {
+            return RGB(r, g, b);
+        }
     };
 
     // Класс для Windows-платформы, реализует методы для рисования на экране в Windows.

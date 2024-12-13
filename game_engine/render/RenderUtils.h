@@ -3,7 +3,7 @@
 #include "Model.h"
 #include "../math/Vector.h"
 #include "../math/Point.h"
-#include "../canvas/windows/canvas.h"
+#include "../canvas/canvas.h"
 #include "../Utils.h"
 
 using namespace std;

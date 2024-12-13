@@ -4,7 +4,7 @@
 #include "math/Point.h"
 #include "render/RenderUtils.h"
 #include "render/Model.h"
-#include "canvas/windows/canvas.h"
+#include "canvas/canvas.h"
 #include "Utils.h"
 
 using namespace std;
