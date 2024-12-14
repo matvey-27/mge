@@ -42,13 +42,13 @@
     <ClCompile Include="math\Vector.cpp">
       <Filter>Исходные файлы\Math</Filter>
     </ClCompile>
-    <ClCompile Include="canvas\canvas.cpp">
-      <Filter>Исходные файлы\canvas</Filter>
-    </ClCompile>
     <ClCompile Include="Utils.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="render\Model.cpp">
+      <Filter>Исходные файлы\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="render\RenderUtils.cpp">
       <Filter>Исходные файлы\Render</Filter>
     </ClCompile>
   </ItemGroup>

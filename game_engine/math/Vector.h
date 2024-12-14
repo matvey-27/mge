@@ -11,11 +11,11 @@ namespace math {
     class Point3D; // Предварительное объявление класса Point3D
 
     // Vector3D и Vector2D
-
     template <typename T>
     class Vector2D {
     public:
         T x, y;
+        T w = 0;
 
         Vector2D() : x(0), y(0) {}
         Vector2D(T x, T y) : x(x), y(y) {};

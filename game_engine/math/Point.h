@@ -13,6 +13,7 @@ namespace math {
     class Point2D {
     public:
         T x, y;
+        T w = 1;
     public:
         Point2D() : x(0), y(0) {}
         Point2D(T x, T y) : x(x), y(y) {};

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35514.174
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MGE", "game_engane\game_engane.vcxproj", "{9C199590-871B-469C-9C12-FEED48C773C2}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MGE", "game_engine\game_engine.vcxproj", "{9C199590-871B-469C-9C12-FEED48C773C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
