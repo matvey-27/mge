@@ -95,15 +95,6 @@ Point3D<int>& Model::getTriangls(size_t index) {
 }
 
 // Метод для перемещения 
-void Model::translate(int dx, int dy, int dz) {
-    for (size_t i = 0; i < count_v; ++i) {
-        vertices[i].x += dx;
-        vertices[i].y += dy;
-        vertices[i].z += dz;
-    }
-}
-
-// Метод для перемещения 
 void Model::translate(Vector3D<float> v) {
     for (size_t i = 0; i < count_v; i += 1) {
         vertices[i] += v;

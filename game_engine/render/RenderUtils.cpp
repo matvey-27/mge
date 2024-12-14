@@ -79,19 +79,56 @@ template <typename T>
 Point3D<T> rotateX(Point3D<T> p, float a) {
 
 
-    float mx1[3]{ 1, 0, 0 }; // 1st row
-    float mx2[3]{ 0, cos(a), -sin(a) }; // 2nd row
-    float mx3[3]{ 0, sin(a), cos(a) }; // 3rd row
+    float Rx[3][3] = {
+    { 1,        0,         0 },
+    { 0, cos(a), -sin(a) },
+    { 0, sin(a),  cos(a) }
+    };
 
     return Point3D<T>(
-        p.x * mx1[0] + p.y * mx1[1] + p.z * mx1[2], // x' = x  1 + y  0 + z  0
-        p.x * mx2[0] + p.y * mx2[1] + p.z * mx2[2], // y' = x  0 + y  cos(a) + z  -sin(a)
-        p.x * mx3[0] + p.y * mx3[1] + p.z * mx3[2]  // z' = x  0 + y  sin(a) + z  cos(a)
+        p.x * Rx[0][0] + p.y * Rx[0][1] + p.z * Rx[0][2], // x' = x  1 + y  0 + z  0
+        p.x * Rx[1][0] + p.y * Rx[1][1] + p.z * Rx[1][2], // y' = x  0 + y  cos(a) + z  -sin(a)
+        p.x * Rx[2][0] + p.y * Rx[2][1] + p.z * Rx[2][2]  // z' = x  0 + y  sin(a) + z  cos(a)
     );
 }
 
-Point2D<int> ViewportToCanvas(Point2D<float> p, int Cw, int Vw, int Ch, int Vh) {
-    return Point2D<int>((int)p.x * Cw / Vw, (int)p.y * Ch / Vh);
+template <typename T>
+Point3D<T> rotateY(Point3D<T> p, float a) {
+
+
+    float Ry[3][3] = {
+    { cos(a),  0, sin(a) },
+    { 0,       1,       0 },
+    { -sin(a), 0, cos(a) }
+    };
+
+
+    return Point3D<T>(
+        p.x * Ry[0][0] + p.y * Ry[0][1] + p.z * Ry[0][2], // x' = x  1 + y  0 + z  0
+        p.x * Ry[1][0] + p.y * Ry[1][1] + p.z * Ry[1][2], // y' = x  0 + y  cos(a) + z  -sin(a)
+        p.x * Ry[2][0] + p.y * Ry[2][1] + p.z * Ry[2][2]  // z' = x  0 + y  sin(a) + z  cos(a)
+    );
+}
+
+template <typename T>
+Point3D<T> rotateZ(Point3D<T> p, float a) {
+
+
+    float Rz[3][3] = {
+    { cos(a), -sin(a), 0 },
+    { sin(a),  cos(a), 0 },
+    { 0,       0,      1 }
+    };
+
+    return Point3D<T>(
+        p.x * Rz[0][0] + p.y * Rz[0][1] + p.z * Rz[0][2], // x' = x  1 + y  0 + z  0
+        p.x * Rz[1][0] + p.y * Rz[1][1] + p.z * Rz[1][2], // y' = x  0 + y  cos(a) + z  -sin(a)
+        p.x * Rz[2][0] + p.y * Rz[2][1] + p.z * Rz[2][2]  // z' = x  0 + y  sin(a) + z  cos(a)
+    );
+}
+
+Point2D<int> ViewportToCanvas(Point2D<float> p, float Cw, float Vw, float Ch, float Vh) {
+    return Point2D<int>((int)(p.x * Cw / Vw), (int)(p.y * Ch / Vh));
 }
 
 Point2D<int> ProjectVertex(Point3D<float> v, float d) {

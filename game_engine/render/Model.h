@@ -1,7 +1,8 @@
 #pragma once
+
+#include "../Utils.h"
 #include "../math/Vector.h"
 #include "../math/Point.h"
-#include "../Utils.h"
 #include <iostream>
 
 using namespace my_fun;
@@ -42,8 +43,6 @@ public:
 
     // Метод для доступа к треугольников
     Point3D<int>& getTriangls(size_t index);
-
-    void translate(int dx, int dy, int dz);
 
     void translate(Vector3D<float> v);
 };

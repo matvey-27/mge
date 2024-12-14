@@ -1,7 +1,22 @@
-#include"main.h"
+#include "Utils.h"
+#include <cmath>
+#include "math/Vector.h"
+#include "math/Point.h"
+#include "render/RenderUtils.h"
+#include "render/Model.h"
+#include "canvas/canvas.h"
 
 
-void DrawExample(Canvas& canvas) {
+using namespace std;
+using namespace math;
+using namespace my_fun;
+using namespace canvas;
+
+
+
+int main() {
+    Canvas canvas(1000, 1000, L"hello world"); // Передаем платформенный класс в Canvas
+
     Point3D<float> vertices[8] = {
         Point3D<float>(1, 1, 1),   // Вершина 0
         Point3D<float>(-1, 1, 1),  // Вершина 1
@@ -30,26 +45,20 @@ void DrawExample(Canvas& canvas) {
 
     Model cube(vertices, 8, triangles, 12);
 
-    if (canvas.safe_data == 100) {
-        canvas.safe_data = 50;
+    cube.translate(Vector3D<float>(0, 0, 10));
+
+    while (true) {
+        canvas.platformCanvas->ProcessEvents();  // Обработка событий
+        if (canvas.platformCanvas->ShouldQuit()) {
+            break;  // Выход из цикла, если нужно завершить программу
+        }
+
+        RenderObject(canvas, cube, 0);
+
+        Sleep(111111);
+
+        canvas.platformCanvas->Clear();  // Очистка экрана
     }
-    else {
-        canvas.safe_data += 1;
-    }
-    
-    int a = canvas.safe_data;
 
-    cube.translate(Vector3D<float>(0, 0, 5));
-
-    RenderObject(canvas, cube, a);
-
-    Sleep(1000);
-}
-
-
-// Главная функция
-int main() {
-    Canvas canvas(800, 600, L"hello world"); // Передаем платформенный класс в Canvas
-    canvas.Run(DrawExample, 600); // Запускаем отрисовку
     return 0; // Завершаем программу
 }
