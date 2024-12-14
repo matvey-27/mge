@@ -28,7 +28,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="canvas\canvas.h" />
-    <ClInclude Include="main.h" />
     <ClInclude Include="math\math.h" />
     <ClInclude Include="math\Point.h" />
     <ClInclude Include="math\Vector.h" />
