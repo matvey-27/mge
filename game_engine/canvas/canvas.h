@@ -124,6 +124,7 @@ namespace canvas {
     // Класс Canvas, который использует PlatformCanvas для рисования на экране.
     class Canvas {
     public:
+        WindowsCanvas* platformCanvas;
         int safe_data = 0;
 
         Canvas(size_t width = 800, size_t height = 600, const std::wstring& title = L"ddd") {
@@ -185,7 +186,7 @@ namespace canvas {
         }
 
     private:
-        WindowsCanvas* platformCanvas;  // Указатель на платформенный класс для рисования
+        //WindowsCanvas* platformCanvas;  // Указатель на платформенный класс для рисования
         bool clearScreen;  // Флаг, указывающий, нужно ли очищать экран при каждом кадре
     };
 }
