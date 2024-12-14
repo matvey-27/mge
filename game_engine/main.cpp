@@ -15,7 +15,7 @@ using namespace canvas;
 
 
 int main() {
-    Canvas canvas(1000, 1000, L"hello world"); // Передаем платформенный класс в Canvas
+    Canvas canvas(800, 800, L"hello world"); // Передаем платформенный класс в Canvas
 
     Point3D<float> vertices[8] = {
         Point3D<float>(1, 1, 1),   // Вершина 0
@@ -44,8 +44,10 @@ int main() {
     };
 
     Model cube(vertices, 8, triangles, 12);
+    Model cube2(vertices, 8, triangles, 12);
 
-    cube.translate(Vector3D<float>(0, 0, 10));
+    cube.move(Vector3D<float>(0, 0, 10));
+    cube2.move(Vector3D<float>(0, -3, 10));
 
     while (true) {
         canvas.platformCanvas->ProcessEvents();  // Обработка событий
@@ -53,9 +55,15 @@ int main() {
             break;  // Выход из цикла, если нужно завершить программу
         }
 
-        RenderObject(canvas, cube, 0);
+        //RenderObject(canvas, cube);
 
-        Sleep(111111);
+        //cube2.move(Vector3D<float>(0, +0.1, 0));
+
+        cube2.rotate(5, 1, 1);
+
+        RenderObject(canvas, cube2);
+
+        Sleep(1111);
 
         canvas.platformCanvas->Clear();  // Очистка экрана
     }

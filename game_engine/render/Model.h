@@ -3,6 +3,7 @@
 #include "../Utils.h"
 #include "../math/Vector.h"
 #include "../math/Point.h"
+#include "Rotate.h"
 #include <iostream>
 
 using namespace my_fun;
@@ -10,6 +11,8 @@ using namespace math;
 
 class Model {
 private:
+    Point3D<float> global_position = Point3D<float>(0, 0, 0); // глобальная позиция позиция
+
     Point3D<float>* vertices;
     size_t count_v; // Количество текущих вершин
     Point3D<int>* triangles;
@@ -44,6 +47,8 @@ public:
     // Метод для доступа к треугольников
     Point3D<int>& getTriangls(size_t index);
 
-    void translate(Vector3D<float> v);
+    void move(Vector3D<float> v);
+
+    void rotate(float ax, float ay, float az);
 };
 

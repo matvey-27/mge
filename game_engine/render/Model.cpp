@@ -95,8 +95,19 @@ Point3D<int>& Model::getTriangls(size_t index) {
 }
 
 // Метод для перемещения 
-void Model::translate(Vector3D<float> v) {
+void Model::move(Vector3D<float> v) {
+    global_position += v;
+
     for (size_t i = 0; i < count_v; i += 1) {
         vertices[i] += v;
+    }
+}
+
+// Метод для вращения 
+void Model::rotate(float ax, float ay, float az) {
+    for (size_t i = 0; i < count_v; i += 1) {
+        vertices[i] = RotateX(vertices[i] - global_position, ax) + global_position;
+        vertices[i] = RotateY(vertices[i] - global_position, ay) + global_position;
+        vertices[i] = RotateZ(vertices[i] - global_position, az) + global_position;
     }
 }
