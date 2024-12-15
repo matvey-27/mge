@@ -19,7 +19,7 @@ int* interpolated(int i0, int d0, int i1, int d1, int& size) {
     delete[] values;
 }
 
-void DrawLine(Canvas canvas, Point2D<int> P0, Point2D<int> P1, rgb_color color) {
+void DrawLine(Canvas canvas, Point2D<int> P0, Point2D<int> P1, RgbColor color) {
     int dx = P1.x - P0.x;
     int dy = P1.y - P0.y;
 
@@ -55,7 +55,7 @@ void DrawLine(Canvas canvas, Point2D<int> P0, Point2D<int> P1, rgb_color color) 
     }
 }
 
-void DrawWireframeTringle(Canvas canvas, Point2D<int> P0, Point2D<int> P1, Point2D<int> P2, rgb_color color)
+void DrawWireframeTringle(Canvas canvas, Point2D<int> P0, Point2D<int> P1, Point2D<int> P2, RgbColor color)
 {
     DrawLine(canvas, P0, P1, color);
     DrawLine(canvas, P1, P2, color);
@@ -63,7 +63,7 @@ void DrawWireframeTringle(Canvas canvas, Point2D<int> P0, Point2D<int> P1, Point
 
 }
 
-void DrawCircle(Canvas canvas, int centerX, int centerY, int radius, rgb_color color) {
+void DrawCircle(Canvas canvas, int centerX, int centerY, int radius, RgbColor color) {
     for (int angle = 0; angle < 360; angle++) {
         int x = centerX + static_cast<int>(radius * cos(angle * 3.14159 / 180));
         int y = centerY + static_cast<int>(radius * sin(angle * 3.14159 / 180));

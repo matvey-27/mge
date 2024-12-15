@@ -12,16 +12,16 @@
 
 namespace canvas {
     // класс цвета 
-    class rgb_color {
+    class RgbColor {
     public:
         int r = 0;
         int g = 0;
         int b = 0;
 
-        rgb_color(int r, int g, int b) : r(r), g(g), b(b) {};
+        RgbColor(int r, int g, int b) : r(r), g(g), b(b) {};
 
-        COLORREF get_color_win() {
-            return RGB(r, g, b);
+        int get_color_win() {
+            return r, g, b;
         }
     };
 
@@ -60,9 +60,9 @@ namespace canvas {
         }
 
         // Установка пикселя на экран
-        void PutPixel(int x, int y, rgb_color color) {
+        void PutPixel(int x, int y, RgbColor color) {
             HDC hdc = GetDC(hwnd);  // Получаем контекст устройства
-            SetPixel(hdc, x, y, color.get_color_win());  // Устанавливаем пиксель в заданной позиции
+            SetPixel(hdc, x, y, RGB(color.r, color.g, color.b));  // Устанавливаем пиксель в заданной позиции
             ReleaseDC(hwnd, hdc);  // Освобождаем контекст устройства
         }
 
@@ -178,7 +178,7 @@ namespace canvas {
 
 
         // Установка пикселя на экране
-        void PutPixel(int x, int y, rgb_color color) {
+        void PutPixel(int x, int y, RgbColor color) {
             platformCanvas->PutPixel(
                 GetWidth() / 2 + x,
                 GetHeight() / 2 + y,

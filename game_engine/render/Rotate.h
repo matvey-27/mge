@@ -7,15 +7,6 @@
 using namespace std;
 using namespace math;
 
-//template <typename T>
-//Point3D<T> RotateX(Point3D<T> p, float a);
-//
-//template <typename T>
-//Point3D<T> RotateY(Point3D<T> p, float a);
-//
-//template <typename T>
-//Point3D<T> RotateZ(Point3D<T> p, float a);
-
 template <typename T>
 Point3D<T> RotateX(Point3D<T> p, float a) {
     float Rx[3][3] = {

@@ -14,11 +14,11 @@ using namespace canvas;
 
 int* interpolated(int i0, int d0, int i1, int d1, int& size);
 
-void DrawLine(Canvas canvas, Point2D<int> P0, Point2D<int> P1, rgb_color color = rgb_color(0, 0, 0));
+void DrawLine(Canvas canvas, Point2D<int> P0, Point2D<int> P1, RgbColor color = RgbColor(0, 0, 0));
 
-void DrawWireframeTringle(Canvas canvas, Point2D<int> P0, Point2D<int> P1, Point2D<int> P2, rgb_color color = rgb_color(0, 0, 0));
+void DrawWireframeTringle(Canvas canvas, Point2D<int> P0, Point2D<int> P1, Point2D<int> P2, RgbColor color = RgbColor(0, 0, 0));
 
-void DrawCircle(Canvas canvas, int centerX, int centerY, int radius, rgb_color color = rgb_color(0, 0, 0));
+void DrawCircle(Canvas canvas, int centerX, int centerY, int radius, RgbColor color = RgbColor(0, 0, 0));
 
 Point2D<int> ViewportToCanvas(Point2D<float> p, float Cw = 1000, float Vw = 1, float Ch = 1000, float Vh = 1);
 

@@ -13,7 +13,6 @@ using namespace my_fun;
 using namespace canvas;
 
 
-
 int main() {
     Canvas canvas(800, 800, L"hello world"); // Передаем платформенный класс в Canvas
 
