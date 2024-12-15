@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iostream>
+#include <iostream> 
 
 namespace math {
     template <typename T>
@@ -40,7 +40,18 @@ namespace math {
             return *this; // Возвращаем this
         }
 
-        Vector3D<T> operator-(Point3D<T> p); //Вычетание точек
+        // Оператор + для добавления вектора
+        template <typename T>
+        Point3D<T> operator+(Point3D<T> p) {
+            return Point3D<T>(this->x + p.x, this->y + p.y, this->z + p.z);
+        }
+
+        //Vector3D<T> operator-(Point3D<T> p); //Вычетание точек
+
+        template <typename T>
+        Vector3D<T> operator-(Point3D<T> p) {
+            return Vector3D<T>(this->x - p.x, this->y - p.y, this->z - p.z);
+        }
 
         void print_position();//Вывод точки в консоль
     };

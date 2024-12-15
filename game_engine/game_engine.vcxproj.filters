@@ -51,6 +51,9 @@
     <ClCompile Include="render\RenderUtils.cpp">
       <Filter>Исходные файлы\Render</Filter>
     </ClCompile>
+    <ClCompile Include="render\Rotate.cpp">
+      <Filter>Исходные файлы\Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="math\math.h">
@@ -73,6 +76,9 @@
     </ClInclude>
     <ClInclude Include="canvas\canvas.h">
       <Filter>Файлы заголовков\Canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Rotate.h">
+      <Filter>Файлы заголовков\Render</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
