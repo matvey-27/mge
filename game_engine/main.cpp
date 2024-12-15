@@ -46,8 +46,10 @@ int main() {
     Model cube(vertices, 8, triangles, 12);
     Model cube2(vertices, 8, triangles, 12);
 
-    cube.move(Vector3D<float>(0, 0, 10));
-    cube2.move(Vector3D<float>(0, -3, 10));
+    cube.move(Vector3D<float>(0, 2, 10));
+    cube2.move(Vector3D<float>(0, -1, 10));
+
+    cube2.rotate(0, 0, 1);
 
     while (true) {
         canvas.platformCanvas->ProcessEvents();  // Обработка событий
@@ -55,15 +57,15 @@ int main() {
             break;  // Выход из цикла, если нужно завершить программу
         }
 
-        //RenderObject(canvas, cube);
+        RenderObject(canvas, cube);
 
         //cube2.move(Vector3D<float>(0, +0.1, 0));
 
-        cube2.rotate(5, 1, 1);
+        cube2.rotate(0, 0, 1);
 
         RenderObject(canvas, cube2);
 
-        Sleep(1111);
+        Sleep(1000);
 
         canvas.platformCanvas->Clear();  // Очистка экрана
     }
