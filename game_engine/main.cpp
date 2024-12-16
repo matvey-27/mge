@@ -12,10 +12,15 @@ using namespace math;
 using namespace my_fun;
 using namespace canvas;
 
+namespace global {
+    Canvas canvas(800, 800, L"hello world"); // Передаем платформенный класс в Canvas
+}
+
+void setpixel(int x, int y, RgbColor color = RgbColor(0, 0, 0)) {
+    global::canvas.PutPixel(x, y, color);
+}
 
 int main() {
-    Canvas canvas(800, 800, L"hello world"); // Передаем платформенный класс в Canvas
-
     Point3D<float> vertices[8] = {
         Point3D<float>(1, 1, 1),   // Вершина 0
         Point3D<float>(-1, 1, 1),  // Вершина 1
@@ -51,22 +56,22 @@ int main() {
     cube2.rotate(0, 0, 1);
 
     while (true) {
-        canvas.platformCanvas->ProcessEvents();  // Обработка событий
-        if (canvas.platformCanvas->ShouldQuit()) {
+        global::canvas.platformCanvas->ProcessEvents();  // Обработка событий
+        if (global::canvas.platformCanvas->ShouldQuit()) {
             break;  // Выход из цикла, если нужно завершить программу
         }
 
-        RenderObject(canvas, cube);
+        RenderObject(setpixel, cube);
 
         //cube2.move(Vector3D<float>(0, +0.1, 0));
 
         cube2.rotate(0, 0, 1);
 
-        RenderObject(canvas, cube2);
+        RenderObject(setpixel, cube2);
 
         Sleep(1000);
 
-        canvas.platformCanvas->Clear();  // Очистка экрана
+        global::canvas.platformCanvas->Clear();  // Очистка экрана
     }
 
     return 0; // Завершаем программу

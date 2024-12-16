@@ -1,13 +1,9 @@
 #pragma once
 
 #include <iostream> 
+#include "Vector.h"
 
 namespace math {
-    template <typename T>
-    class Vector2D; // Предварительное объявление класса Vector2D
-
-    template <typename T>
-    class Vector3D; // Предварительное объявление класса Vector3D
 
     // Point3D и Point2D
     template <typename T>

@@ -19,7 +19,7 @@ int* interpolated(int i0, int d0, int i1, int d1, int& size) {
     delete[] values;
 }
 
-void DrawLine(Canvas canvas, Point2D<int> P0, Point2D<int> P1, RgbColor color) {
+void DrawLine(void (*PutPixel)(int x, int y, RgbColor color), Point2D<int> P0, Point2D<int> P1, RgbColor color) {
     int dx = P1.x - P0.x;
     int dy = P1.y - P0.y;
 
@@ -33,7 +33,7 @@ void DrawLine(Canvas canvas, Point2D<int> P0, Point2D<int> P1, RgbColor color) {
 
         for (int x = P0.x; x <= P1.x; ++x) {
             int i = x - P0.x;
-            canvas.PutPixel(x, ys[i], color);
+            PutPixel(x, ys[i], color);
         }
 
         delete[] ys; // Освобождаем память
@@ -48,26 +48,26 @@ void DrawLine(Canvas canvas, Point2D<int> P0, Point2D<int> P1, RgbColor color) {
 
         for (int y = P0.y; y <= P1.y; ++y) {
             int i = y - P0.y;
-            canvas.PutPixel(xs[i], y, color);
+            PutPixel(xs[i], y, color);
         }
 
         delete[] xs; // Освобождаем память
     }
 }
 
-void DrawWireframeTringle(Canvas canvas, Point2D<int> P0, Point2D<int> P1, Point2D<int> P2, RgbColor color)
+void DrawWireframeTringle(void (*PutPixel)(int x, int y, RgbColor color), Point2D<int> P0, Point2D<int> P1, Point2D<int> P2, RgbColor color)
 {
-    DrawLine(canvas, P0, P1, color);
-    DrawLine(canvas, P1, P2, color);
-    DrawLine(canvas, P2, P0, color);
+    DrawLine(PutPixel, P0, P1, color);
+    DrawLine(PutPixel, P1, P2, color);
+    DrawLine(PutPixel, P2, P0, color);
 
 }
 
-void DrawCircle(Canvas canvas, int centerX, int centerY, int radius, RgbColor color) {
+void DrawCircle(void (*PutPixel)(int x, int y, RgbColor color), int centerX, int centerY, int radius, RgbColor color) {
     for (int angle = 0; angle < 360; angle++) {
         int x = centerX + static_cast<int>(radius * cos(angle * 3.14159 / 180));
         int y = centerY + static_cast<int>(radius * sin(angle * 3.14159 / 180));
-        canvas.PutPixel(x, y, color);  // Рисуем каждый пиксель круга
+        PutPixel(x, y, color);  // Рисуем каждый пиксель круга
     }
 }
 
@@ -79,14 +79,14 @@ Point2D<int> ProjectVertex(Point3D<float> v, float d) {
     return ViewportToCanvas(Point2D<float>(v.x * d / v.z, v.y * d / v.z));
 }
 
-void RenderTriengle(Canvas& canvas, Point3D<int> triangle, Point2D<int>* project) {
-    DrawWireframeTringle(canvas,
+void RenderTriengle(void (*PutPixel)(int x, int y, RgbColor color), Point3D<int> triangle, Point2D<int>* project) {
+    DrawWireframeTringle(PutPixel,
         project[triangle.x],
         project[triangle.y],
         project[triangle.z]);
 }
 
-void RenderObject(Canvas& canvas, Model& model) {
+void RenderObject(void (*PutPixel)(int x, int y, RgbColor color), Model& model) {
     Point2D<int>* projected = new Point2D<int>[0];
     int size = 0;
 
@@ -95,7 +95,7 @@ void RenderObject(Canvas& canvas, Model& model) {
     }
 
     for (int i = 0; i < model.getTrianglsCount(); i++) {
-        RenderTriengle(canvas, model.getTriangls(i), projected);
+        RenderTriengle(PutPixel, model.getTriangls(i), projected);
     }
 
     delete[] projected;
