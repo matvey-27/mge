@@ -5,6 +5,7 @@
 #include "render/RenderUtils.h"
 #include "render/Model.h"
 #include "canvas/canvas.h"
+#include "math/mat4.h"
 
 
 using namespace std;

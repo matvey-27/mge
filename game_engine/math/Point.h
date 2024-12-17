@@ -4,6 +4,8 @@
 #include "Vector.h"
 
 namespace math {
+    template <typename T>
+    class mat4;
 
     // Point3D и Point2D
     template <typename T>
@@ -50,5 +52,9 @@ namespace math {
         }
 
         void print_position();//Вывод точки в консоль
+
+        Point3D<T> operator *(mat4<T> matrix) {
+            return matrix * this;
+        }
     };
 }
