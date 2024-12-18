@@ -4,21 +4,12 @@
 #include "math/Point.h"
 #include "render/RenderUtils.h"
 #include "render/Model.h"
-#include "canvas/canvas.h"
+#include "libs.h"
 
 
 using namespace std;
 using namespace math;
 using namespace my_fun;
-using namespace canvas;
-
-namespace global {
-    Canvas canvas(800, 800, L"hello world"); // Передаем платформенный класс в Canvas
-}
-
-void setpixel(int x, int y, RgbColor color = RgbColor(0, 0, 0)) {
-    global::canvas.PutPixel(x, y, color);
-}
 
 int main() {
     Point3D<float> vertices[8] = {
@@ -55,23 +46,19 @@ int main() {
 
     cube2.rotate(0, 0, 1);
 
-    while (true) {
-        global::canvas.platformCanvas->ProcessEvents();  // Обработка событий
-        if (global::canvas.platformCanvas->ShouldQuit()) {
-            break;  // Выход из цикла, если нужно завершить программу
-        }
+    InitializeWindow(1000, 1000);
 
-        RenderObject(setpixel, cube);
+    while (true) {
+
+        RenderObject(DrawPixel, cube);
 
         //cube2.move(Vector3D<float>(0, +0.1, 0));
 
         cube2.rotate(0, 0, 1);
 
-        RenderObject(setpixel, cube2);
+        RenderObject(DrawPixel, cube2);
 
-        Sleep(1000);
-
-        global::canvas.platformCanvas->Clear();  // Очистка экрана
+        ClearScreen(255, 255, 255);
     }
 
     return 0; // Завершаем программу

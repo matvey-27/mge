@@ -4,13 +4,12 @@
 #include "../Utils.h"
 #include "../math/Vector.h"
 #include "../math/Point.h"
-#include "../canvas/canvas.h"
+#include "RgbColor.h"
 #include "Model.h"
 
 using namespace std;
 using namespace math;
 using namespace my_fun;
-using namespace canvas;
 
 // drow
 int* interpolated(int i0, int d0, int i1, int d1, int& size);
