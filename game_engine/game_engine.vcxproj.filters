@@ -42,6 +42,9 @@
     <ClCompile Include="render\RenderUtils.cpp">
       <Filter>Исходные файлы\Render</Filter>
     </ClCompile>
+    <ClCompile Include="math\mat4.cpp">
+      <Filter>Исходные файлы\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="math\math.h">
@@ -70,6 +73,8 @@
     </ClInclude>
     <ClInclude Include="libs.h">
       <Filter>Файлы заголовков</Filter>
+    <ClInclude Include="math\mat4.h">
+      <Filter>Файлы заголовков\Math</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
