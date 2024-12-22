@@ -50,5 +50,17 @@ public:
     void move(Vector3D<float> v);
 
     void rotate(float ax, float ay, float az);
+
+    
+    Point3D<float> getPosition() {
+        return global_position;
+    }
+
+    // временная функция 
+    void PrintPosition() {
+        cout << global_position.x << " ";
+        cout << global_position.y << " ";
+        cout << global_position.z << "\n";
+    }
 };
 

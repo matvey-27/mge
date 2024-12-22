@@ -6,6 +6,7 @@
 #include "render/Model.h"
 #include "libs.h"
 #include "math/mat4.h"
+#include <windows.h> // для Sleep
 
 
 using namespace std;
@@ -51,15 +52,25 @@ int main() {
 
     while (true) {
 
-        RenderObject(DrawPixel, cube);
+        ClearScreen(255, 255, 255);
 
         //cube2.move(Vector3D<float>(0, +0.1, 0));
 
-        cube2.rotate(0, 0, 1);
+        cube2.rotate(0, 1, 1);
 
         RenderObject(DrawPixel, cube2);
 
-        ClearScreen(255, 255, 255);
+        RenderObject(DrawPixel, cube);
+
+        cube2.PrintPosition();
+
+        if (cube2.getPosition().x < 3) {
+            cube2.move(Vector3D<float>(1, 0, 0));
+        }
+        else if (cube2.getPosition().x >= 3) {
+            cube2.move(Vector3D<float>(-6, 0, 0));
+        }
+        //Sleep(100);
     }
 
     return 0; // Завершаем программу
