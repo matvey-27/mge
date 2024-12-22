@@ -8,6 +8,10 @@
 #include "math/mat4.h"
 #include <windows.h> // для Sleep
 
+// нужно добавить алгоритм как там https://gist.github.com/vurtun/29727217c269a2fbf4c0ed9a1d11cb40
+//     для колизий 
+// нужно добавить opengl
+// засунуть все в динамическую библиотеку 
 
 using namespace std;
 using namespace math;
