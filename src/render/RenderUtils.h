@@ -4,7 +4,7 @@
 #include "../Utils.h"
 #include "../math/Vector.h"
 #include "../math/Point.h"
-#include "RgbColor.h"
+#include "../RgbColor.h"
 #include "Model.h"
 
 using namespace std;
