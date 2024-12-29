@@ -11,7 +11,11 @@ set(GRAPHICS_LIBRARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs")  # Запись т�
 set(GRAPHICS_LIBRARY "${GRAPHICS_LIBRARY_DIR}/GraphicsLibrary.lib")
 
 #Создайте исполняемый файл
-add_executable(game_engine src/main.cpp)
+add_executable(game_engine src/main.cpp
+                        src/math/point.cpp
+                        src/math/vector.cpp
+                        src/render/Model.cpp
+                        src/render/RenderUtils.cpp)
 
 #Линковка к библиотеке .lib
 target_link_libraries(game_engine PRIVATE ${GRAPHICS_LIBRARY})
