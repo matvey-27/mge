@@ -21,6 +21,11 @@ namespace mge {
         vec2(T x, T y, T w) : x(x), y(y) {};
         ~vec2() = default;
     };
+
+    template <typename T>
+    T dot(vec2<T> vector1, vec2<T> vector2){
+            return vector1.x * vector2.x + vector1.y * vector2.y;
+    }
 }
 // тест vec3 (если все работает -> движок *("MGE/math/vec3")* )
 namespace mge {
@@ -52,6 +57,11 @@ namespace mge {
             return vec3<T>(this->x + p.x, this->y + p.y, this->z + p.z);
         }
     };
+
+    template <typename T>
+    T dot(vec3<T> vector1, vec3<T> vector2){
+            return vector1.x * vector2.x + vector1.y * vector2.y + vector1.z * vector2.z;
+    }
 }
 // тест mat4
 namespace mge{
@@ -398,15 +408,31 @@ namespace mge {
         delete[] projected;
     }
 }
-// class canvas
+// class camera
 namespace mge {
-    class canvas{
-        public:
-            float width = 800.0f;        // Ширина окна
-            float height = 600.0f;       // Высота окна
+    class camera{
+        private:
+            // Инициализация переменных
+            float width;        // Ширина окна
+            float height;       // Высота окна
             float FOVy = 45.0f * (M_PI / 180.0f); // Перевод ФОВ в радианы
             float zNear = 0.1f;          // Ближняя плоскость
             float zFar = 1000.0f;        // Дальняя плоскость
+            float aspect;
+        public:
+            // конструктор по высоте и ширине
+            camera(float w, float h) : aspect(w/h){};
+            
+            // конструктор по высоте, ширине и углу обзора
+            camera(float w, float h, float FOVy) : aspect(w/h), FOVy(FOVy) {};
+
+            // конструктор по высоте, ширинеи буверам z
+            camera(float w, float h, float zNear, float zFar) : aspect(w/h), zNear(zNear), zFar(zFar) {};
+
+            // конструктор по высоте, ширине, полю зрения и z буферам
+            camera(float w, float h, float FOVy, float zNear, float zFar) : aspect(w/h), FOVy(FOVy), zNear(zNear), zFar(zFar) {};
+
+
     };
 }
 
