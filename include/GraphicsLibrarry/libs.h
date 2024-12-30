@@ -7,7 +7,8 @@ namespace dll {
         __declspec(dllimport) void ClearScreen(int r, int g, int b);
         __declspec(dllimport) void DrawPixel(int x, int y, int r, int g, int b);
         __declspec(dllimport) void RenderLoop();
-    }
+        __declspec(dllimport) bool IsWindowOpen();
+        }
 }
 
 void DrawPixel(int x, int y, RgbColor color) {
