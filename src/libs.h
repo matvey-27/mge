@@ -1,5 +1,5 @@
 #pragma once
-#include "render/RgbColor.h"
+#include "RgbColor.h"
 
 namespace dll {
     extern "C" {
