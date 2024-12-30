@@ -5,6 +5,7 @@
 
 #include "../include/GraphicsLibrarry/libs.h"
 #include "../include/MGE/Utils.hpp"
+
 #include <stdexcept>
 #include <thread>
 #include <cmath>
@@ -17,8 +18,7 @@ namespace mge {
         T x, y, w = 0;
         
         vec2() : x(0), y(0) {};
-        vec2(T x, T y) : x(x), y(y) {};
-        vec2(T x, T y, T w) : x(x), y(y) {};
+        vec2(T x, T y, T w = 1) : x(x), y(y), w(w) {};
         ~vec2() = default;
     };
 
@@ -35,8 +35,7 @@ namespace mge {
         T z;
         
         vec3() : vec2<T>::vec2(), z(0) {};
-        vec3(T x, T y, T z): vec2<T>::vec2(x, y), z(z) {};
-        vec3(T x, T y, T z, T w): vec2<T>::vec2(x, y, w), z(z) {};
+        vec3(T x, T y, T z, T w = 1): vec2<T>::vec2(x, y, w), z(z) {};
         ~vec3() = default;
 
         // оператор +=
@@ -56,6 +55,29 @@ namespace mge {
         vec3<T> operator+(vec3<T> p) {
             return vec3<T>(this->x + p.x, this->y + p.y, this->z + p.z);
         }
+
+        // Оператор * умнажение векторов (cross)
+        vec3<T> operator*(const vec3<T>& other) const {
+            return vec3<T>(
+                this->y * other.z - this->z * other.y,  // Компонента x
+                this->z * other.x - this->x * other.z,  // Компонента y
+                this->x * other.y - this->y * other.x   // Компонента z
+            );
+        }
+
+        // длина вектора
+        T length() const {
+            return std::sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
+        }
+
+        // Метод для нормализации вектора
+        vec3<T> normalize() const {
+            T len = length();
+            if (len == 0) {
+                throw std::runtime_error("Cannot normalize a zero-length vector");
+            }
+            return vec3<T>(this->x / len, this->y / len, this->z / len);
+        }
     };
 
     template <typename T>
@@ -71,6 +93,8 @@ namespace mge{
     private:
         T matrix[4][4];
     public:
+     mat4(){};
+
     mat4(T mx[4][4]) {
         for (int i = 0; i < 4; ++i) {
             for (int j = 0; j < 4; ++j) {
@@ -410,29 +434,93 @@ namespace mge {
 }
 // class camera
 namespace mge {
+    // https://rekovalev.site/3d-camera-basics/
+
     class camera{
-        private:
-            // Инициализация переменных
-            float width;        // Ширина окна
-            float height;       // Высота окна
-            float FOVy = 45.0f * (M_PI / 180.0f); // Перевод ФОВ в радианы
-            float zNear = 0.1f;          // Ближняя плоскость
-            float zFar = 1000.0f;        // Дальняя плоскость
-            float aspect;
-        public:
-            // конструктор по высоте и ширине
-            camera(float w, float h) : aspect(w/h){};
-            
-            // конструктор по высоте, ширине и углу обзора
-            camera(float w, float h, float FOVy) : aspect(w/h), FOVy(FOVy) {};
+    private:
+        // Инициализация переменных
+        float width;        // Ширина окна
+        float height;       // Высота окна
+        float FOVy = 25.0f * (M_PI / 180.0f); // Перевод ФОВ в радианы
+        float zNear = 0.1f;          // Ближняя плоскость
+        float zFar = 100.0f;        // Дальняя плоскость
+        float aspect;
+        
+        // - pos: Позиция камеры в мировом пространстве.
+        // - target: Точка, на которую ориентирована камера (например, объект, который мы хотим видеть).
+        // - up: Вектор "вверх", который определяет, что считается "верхом" для камеры (обычно вектор (0, 1, 0) для стандартной ориентации).
+        // - f: Направляющий вектор, указывающий направление взгляда камеры.
+        // - s: Вектор направления вправо, который определяет горизонтальную ориентацию камеры.
+        // - u: Вектор, определяющий направление вверх для камеры, основанный на векторах f и s.
 
-            // конструктор по высоте, ширинеи буверам z
-            camera(float w, float h, float zNear, float zFar) : aspect(w/h), zNear(zNear), zFar(zFar) {};
+        vec3<float> target;
+        vec3<float> pos;
+        vec3<float> up;
+        vec3<float> f;
+        vec3<float> s;
+        vec3<float> u;
 
-            // конструктор по высоте, ширине, полю зрения и z буферам
-            camera(float w, float h, float FOVy, float zNear, float zFar) : aspect(w/h), FOVy(FOVy), zNear(zNear), zFar(zFar) {};
+    
+        void updateVectors() {
+            f = (target - pos).normalize();
+            f.w = 0;
 
+            s = (up * f).normalize();
+            s.w = 0;
 
+            u = f * s;
+            u.w = 0;
+
+            float view_matrix[4][4] = {
+                { s.x, s.y, s.z, 0 },
+                { u.x, u.y, u.z, 0 },
+                { -f.x, -f.y, -f.z, 0 },
+                { -dot(s, pos), -dot(u, pos), dot(f, pos), 1 }
+            };
+
+            this->view_matrix = mat4<float>(view_matrix);
+
+            float projection_matrix[4][4] = {
+                { 1 / (aspect * std::tan(FOVy/2)), 0, 0, 0 },
+                { 0, 1 / std::tan(FOVy / 2), 0, 0 },
+                { 0, 0, -1 * (zFar + zNear) / (zFar - zNear), -1},
+                { 0, 0, -1 * (2 * zFar * zNear) / (zFar - zNear), 0}
+            };
+
+            this->projection_matrix = mat4<float>(projection_matrix);
+        }
+
+    public:
+        mat4<float> view_matrix;
+        mat4<float> projection_matrix;
+
+        // конструктор по высоте и ширине
+        camera(float w, float h, vec3<float> pos = vec3<float>(0, 0, 0), vec3<float> target = vec3<float>(0, 0, -1), vec3<float> up = vec3<float>(0, 1, 0, 0)) : aspect(w/h), pos(pos), target(target), up(up) {
+            updateVectors();
+        };
+        
+        // конструктор по высоте, ширине и углу обзора
+        camera(float w, float h, float FOVy, vec3<float> pos = vec3<float>(0, 0, 0), vec3<float> target = vec3<float>(0, 0, -1), vec3<float> up = vec3<float>(0, 1, 0)) : aspect(w/h), FOVy(FOVy), pos(pos), target(target), up(up) {
+            updateVectors();
+        };
+
+        // конструктор по высоте, ширинеи буверам z
+        camera(float w, float h, float zNear, float zFar, vec3<float> pos = vec3<float>(0, 0, 0), vec3<float> target = vec3<float>(0, 0, -1), vec3<float> up = vec3<float>(0, 1, 0)) : aspect(w/h), zNear(zNear), zFar(zFar), pos(pos), target(target), up(up) {
+            updateVectors();
+        };
+
+        // конструктор по высоте, ширине, полю зрения и z буферам
+        camera(float w, float h, float FOVy, float zNear, float zFar, vec3<float> pos = vec3<float>(0, 0, 0), vec3<float> target = vec3<float>(0, 0, -1), vec3<float> up = vec3<float>(0, 1, 0)) : aspect(w/h), FOVy(FOVy), zNear(zNear), zFar(zFar), pos(pos), target(target), up(up) {
+            updateVectors();
+        };
+        
+        vec2<int> test3D(vec3<float> v){
+            v = view_matrix * v;
+            v = projection_matrix * v;
+            return vec2<int>(
+                (int)(v.x / v.w),
+                (int)(v.y / v.w));
+        };
     };
 }
 
@@ -440,21 +528,21 @@ int main() {
     InitializeWindow(500, 500);
 
     mge::vec3<float> vertices[8] = {
-        mge::vec3<float>(1, 1, 1),   // Вершина 0
-        mge::vec3<float>(-1, 1, 1),  // Вершина 1
-        mge::vec3<float>(-1, -1, 1), // Вершина 2
-        mge::vec3<float>(1, -1, 1),  // Вершина 3
-        mge::vec3<float>(1, 1, -1),  // Вершина 4
-        mge::vec3<float>(-1, 1, -1), // Вершина 5
-        mge::vec3<float>(-1, -1, -1),// Вершина 6
-        mge::vec3<float>(1, -1, -1)  // Вершина 7
+        mge::vec3<float>(2, 2, 2),   // Вершина 0
+        mge::vec3<float>(-2, 2, 2),  // Вершина 1
+        mge::vec3<float>(-2, -2, 2), // Вершина 2
+        mge::vec3<float>(2, -2, 2),  // Вершина 3
+        mge::vec3<float>(2, 2, -2),  // Вершина 4
+        mge::vec3<float>(-2, 2, -2), // Вершина 5
+        mge::vec3<float>(-2, -2, -2),// Вершина 6
+        mge::vec3<float>(2, -2, -2)  // Вершина 7
     };
 
     mge::Triangles<int> triangles[12] = {
-        mge::Triangles<int>{0, 1, 2, 255, }, // Передняя гра грань 0
-        mge::Triangles<int>{0, 2, 3, 255, }, // Передняя гра грань 1
-        mge::Triangles<int>{4, 5, 6, 255, }, // Задняя гра грани 0
-        mge::Triangles<int>{4, 6, 7, 255, }, // Задняя гра грани 1
+        mge::Triangles<int>{0, 1, 2, 255, }, // Передняя грань 0
+        mge::Triangles<int>{0, 2, 3, 255, }, // Передняя грань 1
+        mge::Triangles<int>{4, 5, 6, 255, }, // Задняя грань 0
+        mge::Triangles<int>{4, 6, 7, 255, }, // Задняя грань 1
         mge::Triangles<int>{1, 5, 6, 255, }, // Левый грань 0
         mge::Triangles<int>{1, 6, 2, 255, }, // Левый грань 1
         mge::Triangles<int>{0, 4, 7, 255, }, // Правый грань 0
@@ -466,16 +554,22 @@ int main() {
     };
 
     mge::Model cube(vertices, 8, triangles, 12);
-    cube.move(mge::vec3<float>(0, 0, 10));
+    cube.move(mge::vec3<float>(0, 0, -0.2));
+
+    mge::camera cam(500, 500);
 
     while (IsWindowOpen()) {
         ClearScreen(0, 100, 100);
 
-        cube.rotate(0, 1, 0);
+        // Отрисовка куба
+        for (int i = 0; i < cube.getTrianglsCount(); i++) {
+            DrawWireframeTringle(DrawPixel,
+            cam.test3D(cube.getVertex(cube.getTriangls(i).n1)),
+            cam.test3D(cube.getVertex(cube.getTriangls(i).n2)),
+            cam.test3D(cube.getVertex(cube.getTriangls(i).n3)));
+        }
 
-        RenderObject(DrawPixel, cube);
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(1)); // Задержка для снижения нагрузки на CPU
+        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Задержка для снижения нагрузки на CPU
     }
 
     return 0; // Завершаем программу
