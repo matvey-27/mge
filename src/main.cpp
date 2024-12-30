@@ -5,9 +5,9 @@
 
 #include "../include/GraphicsLibrarry/libs.h"
 #include "../include/MGE/Utils.hpp"
-#include "../include/MGE/Utils.hpp"
-#include <iostream>
+#include <stdexcept>
 #include <thread>
+#include <cmath>
 
 // тест vec2 (если все работает -> движок *("MGE/math/vec2")* )
 namespace mge {
@@ -16,8 +16,9 @@ namespace mge {
     public:
         T x, y, w = 0;
         
-        vec2() : x(x), y(y) {};
+        vec2() : x(0), y(0) {};
         vec2(T x, T y) : x(x), y(y) {};
+        vec2(T x, T y, T w) : x(x), y(y) {};
         ~vec2() = default;
     };
 }
@@ -30,13 +31,25 @@ namespace mge {
         
         vec3() : vec2<T>::vec2(), z(0) {};
         vec3(T x, T y, T z): vec2<T>::vec2(x, y), z(z) {};
+        vec3(T x, T y, T z, T w): vec2<T>::vec2(x, y, w), z(z) {};
         ~vec3() = default;
 
+        // оператор +=
         vec3<T>& operator+=(const vec3<T>& v) {
             this->x += v.x;
             this->y += v.y;
             this->z += v.z;
             return *this; // Возвращаем this
+        }
+
+        // оператор -
+        vec3<T> operator-(vec3<T> p) {
+            return vec3<T>(this->x - p.x, this->y - p.y, this->z - p.z);
+        }
+
+        // Оператор +  
+        vec3<T> operator+(vec3<T> p) {
+            return vec3<T>(this->x + p.x, this->y + p.y, this->z + p.z);
         }
     };
 }
@@ -48,30 +61,34 @@ namespace mge{
     private:
         T matrix[4][4];
     public:
-       mat4(T mx[4][4]) {
-           matrix = mx;
-       };
+    mat4(T mx[4][4]) {
+        for (int i = 0; i < 4; ++i) {
+            for (int j = 0; j < 4; ++j) {
+                matrix[i][j] = mx[i][j];
+            }
+        }
+    }
 
-       mat4<T> operator +(mat4<T> mx) {
-           T matrix_r[4][4];
+    mat4<T> operator +(mat4<T> mx) {
+        T matrix_r[4][4];
 
-           for (int i = 0; i <= 4; i++) {
-               for (int f = 0; f <= 4; f++) {
-                   matrix_r[i][f] = matrix[i][f] + mx[i][f];
-               }
-           }
-           return mat4(matrix_r);
+        for (int i = 0; i <= 4; i++) {
+            for (int f = 0; f <= 4; f++) {
+                matrix_r[i][f] = matrix[i][f] + mx[i][f];
+            }
+        }
+        return mat4(matrix_r);
 
-       }
+    }
 
-       vec3<T> operator *(vec3<T> v) {
-           return vec3<T>(
-               v.x * matrix[0][0] + v.y * matrix[0][1] + v.z * matrix[0][2] + v.w * matrix[0][3],
-               v.x * matrix[1][0] + v.y * matrix[1][1] + v.z * matrix[1][2] + v.w * matrix[1][3],
-               v.x * matrix[2][0] + v.y * matrix[2][1] + v.z * matrix[2][2] + v.w * matrix[2][3],
-               v.x * matrix[3][0] + v.y * matrix[3][1] + v.z * matrix[3][2] + v.w * matrix[3][3]
-           );
-       }
+    vec3<T> operator *(vec3<T> v) {
+        return vec3<T>(
+            v.x * matrix[0][0] + v.y * matrix[0][1] + v.z * matrix[0][2] + v.w * matrix[0][3],
+            v.x * matrix[1][0] + v.y * matrix[1][1] + v.z * matrix[1][2] + v.w * matrix[1][3],
+            v.x * matrix[2][0] + v.y * matrix[2][1] + v.z * matrix[2][2] + v.w * matrix[2][3],
+            v.x * matrix[3][0] + v.y * matrix[3][1] + v.z * matrix[3][2] + v.w * matrix[3][3]
+        );
+    }
 
     };
 }
@@ -232,6 +249,47 @@ namespace mge {
             vertices[i] += v;
         }
     }
+
+    // Метод для вращения 
+    void Model::rotate(float ax_deg, float ay_deg, float az_deg) {
+        // Преобразование углов из градусов в радианы
+        float ax = ax_deg * (M_PI / 180.0f);
+        float ay = ay_deg * (M_PI / 180.0f);
+        float az = az_deg * (M_PI / 180.0f);
+
+        // Матрица для вращения по X
+        float rotationMatrixX[4][4] = {
+            { 1,         0,          0, 0 },
+            { 0, std::cos(ax), -std::sin(ax),  0 },
+            { 0, std::sin(ax),  std::cos(ax),  0 },
+            { 0,         0,          0, 1 }
+        };
+        mat4<float> rx(rotationMatrixX);
+
+        // Матрица для вращения по Y
+        float rotationMatrixY[4][4] = {
+            { std::cos(ay),  0, std::sin(ay), 0 },
+            { 0,        1, 0,       0 },
+            { -std::sin(ay), 0, std::cos(ay), 0 },
+            { 0,        0, 0,       1 }
+        };
+        mat4<float> ry(rotationMatrixY);
+        
+        // Матрица для вращения по Z
+        float rotationMatrixZ[4][4] = {
+            { std::cos(az), -std::sin(az), 0, 0 },
+            { std::sin(az),  std::cos(az), 0, 0 },
+            { 0,        0,       1, 0 },
+            { 0,        0,       0, 1 }
+        };
+        mat4<float> rz(rotationMatrixZ);
+
+        // Применение вращения к вершинам
+        for (size_t i = 0; i < count_v; ++i) {
+            // Применяем вращение по осям X, Y и Z последовательно
+            vertices[i] = rz * (ry * (rx * (vertices[i] - global_position))) + global_position;
+        }
+    }
 }
 // !!! зависит от vec2 котоорый описан выше *("MGE/math/vec2")_vec2*
 // тест функций отрисовки без rgbcolor (если все работает -> движок)
@@ -301,13 +359,13 @@ namespace mge {
 
     void DrawCircle(void (*PutPixel)(int x, int y, int r, int g, int b), int centerX, int centerY, int radius, int color_r, int color_g, int color_b) {
         for (int angle = 0; angle < 360; angle++) {
-            int x = centerX + static_cast<int>(radius * cos(angle * 3.14159 / 180));
-            int y = centerY + static_cast<int>(radius * sin(angle * 3.14159 / 180));
+            int x = centerX + static_cast<int>(radius * std::cos(angle * 3.14159 / 180));
+            int y = centerY + static_cast<int>(radius * std::sin(angle * 3.14159 / 180));
             PutPixel(x, y, color_r, color_g, color_b);  // Рисуем каждый пиксель круга
         }
     }
 }
-
+// функции рендеринга
 namespace mge {
     vec2<int> ViewportToCanvas(vec2<float> p, float Cw = 500, float Vw = 1, float Ch = 500, float Vh = 1) {
         return vec2<int>((int)(p.x * Cw / Vw), (int)(p.y * Ch / Vh));
@@ -321,7 +379,8 @@ namespace mge {
         DrawWireframeTringle(PutPixel,
             project[triangle.n1],
             project[triangle.n2],
-            project[triangle.n3]);
+            project[triangle.n3],
+            triangle.r, triangle.g, triangle.b);
     }
 
     void RenderObject(void (*PutPixel)(int x, int y, int r, int g, int b), Model& model) {
@@ -339,7 +398,17 @@ namespace mge {
         delete[] projected;
     }
 }
-
+// class canvas
+namespace mge {
+    class canvas{
+        public:
+            float width = 800.0f;        // Ширина окна
+            float height = 600.0f;       // Высота окна
+            float FOVy = 45.0f * (M_PI / 180.0f); // Перевод ФОВ в радианы
+            float zNear = 0.1f;          // Ближняя плоскость
+            float zFar = 1000.0f;        // Дальняя плоскость
+    };
+}
 
 int main() {
     InitializeWindow(500, 500);
@@ -356,18 +425,18 @@ int main() {
     };
 
     mge::Triangles<int> triangles[12] = {
-        mge::Triangles<int>{0, 1, 2}, // Передняя гра грань 0
-        mge::Triangles<int>{0, 2, 3}, // Передняя гра грань 1
-        mge::Triangles<int>{4, 5, 6}, // Задняя гра грани 0
-        mge::Triangles<int>{4, 6, 7}, // Задняя гра грани 1
-        mge::Triangles<int>{1, 5, 6}, // Левый грань 0
-        mge::Triangles<int>{1, 6, 2}, // Левый грань 1
-        mge::Triangles<int>{0, 4, 7}, // Правый грань 0
-        mge::Triangles<int>{0, 7, 3}, // Правый грань 1
-        mge::Triangles<int>{4, 5, 1}, // Верхний грань 0
-        mge::Triangles<int>{4, 1, 0}, // Верхний грань 1
-        mge::Triangles<int>{2, 6, 7}, // Нижний грань 0
-        mge::Triangles<int>{2, 7, 3}  // Нижний грань 1
+        mge::Triangles<int>{0, 1, 2, 255, }, // Передняя гра грань 0
+        mge::Triangles<int>{0, 2, 3, 255, }, // Передняя гра грань 1
+        mge::Triangles<int>{4, 5, 6, 255, }, // Задняя гра грани 0
+        mge::Triangles<int>{4, 6, 7, 255, }, // Задняя гра грани 1
+        mge::Triangles<int>{1, 5, 6, 255, }, // Левый грань 0
+        mge::Triangles<int>{1, 6, 2, 255, }, // Левый грань 1
+        mge::Triangles<int>{0, 4, 7, 255, }, // Правый грань 0
+        mge::Triangles<int>{0, 7, 3, 255, }, // Правый грань 1
+        mge::Triangles<int>{4, 5, 1, 255, }, // Верхний грань 0
+        mge::Triangles<int>{4, 1, 0, 255, }, // Верхний грань 1
+        mge::Triangles<int>{2, 6, 7, 255}, // Нижний грань 0
+        mge::Triangles<int>{2, 7, 3, 255}  // Нижний грань 1
     };
 
     mge::Model cube(vertices, 8, triangles, 12);
@@ -376,9 +445,11 @@ int main() {
     while (IsWindowOpen()) {
         ClearScreen(0, 100, 100);
 
+        cube.rotate(0, 1, 0);
+
         RenderObject(DrawPixel, cube);
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Задержка для снижения нагрузки на CPU
+        std::this_thread::sleep_for(std::chrono::milliseconds(1)); // Задержка для снижения нагрузки на CPU
     }
 
     return 0; // Завершаем программу
