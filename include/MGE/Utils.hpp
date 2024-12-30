@@ -1,6 +1,6 @@
 #pragma once
 
-namespace my_fun {
+namespace mge {
     // Реализация шаблонной функции addElement с int как размер
     template <typename T>
     void addElement(T*& arr, int& size, T newElement) {
