@@ -21,7 +21,6 @@ namespace mge {
         ~vec2() = default;
     };
 }
-
 // тест vec3 (если все работает -> движок *("MGE/math/vec3")* )
 namespace mge {
     template <typename T>
@@ -41,82 +40,41 @@ namespace mge {
         }
     };
 }
-
-// !!! зависит от vec2 котоорый описан выше *("MGE/math/vec2")_vec2*
-// тест функций отрисовки без rgbcolor (если все работает -> движок)
-namespace mge {
-    int* interpolated(int i0, int d0, int i1, int d1, int& size) {
-        size = abs(i1 - i0) + 1; // Количество интерполированных значений
-        int* values = new int[size]; // Создаем массив нужного размера
-
-        // Проверяем, если i0 равно i1
-        if (i0 == i1) {
-            values[0] = d0; // Добавляем d0 в массив
-        }
-        else {
-            int delta = d1 - d0;
-            for (int i = 0; i < size; ++i) {
-                values[i] = d0 + (delta * i) / (i1 - i0); // Линейная интерполяция
-            }
-        }
-
-        return values; // Возвращаем массив
-        delete[] values;
-    }
-
-    void DrawLine(void (*PutPixel)(int x, int y, int r, int g, int b), vec2<int> P0, vec2<int> P1, int color_r, int color_g, int color_b) {
-        int dx = P1.x - P0.x;
-        int dy = P1.y - P0.y;
-
-        if (abs(dx) > abs(dy)) {
-            if (P0.x > P1.x) {
-                swap(P0, P1);
-            }
-
-            int size;
-            int* ys = interpolated(P0.x, P0.y, P1.x, P1.y, size);
-
-            for (int x = P0.x; x <= P1.x; ++x) {
-                int i = x - P0.x;
-                PutPixel(x, ys[i], color_r, color_g, color_b);
-            }
-
-            delete[] ys; // Освобождаем память
-        }
-        else {
-            if (P0.y > P1.y) {
-                swap(P0, P1);
-            }
-
-            int size;
-            int* xs = interpolated(P0.y, P0.x, P1.y, P1.x, size);
-
-            for (int y = P0.y; y <= P1.y; ++y) {
-                int i = y - P0.y;
-                PutPixel(xs[i], y, color_r, color_g, color_b);
-            }
-
-            delete[] xs; // Освобождаем память
-        }
-    }
-
-    void DrawWireframeTringle(void (*PutPixel)(int x, int y, int r, int g, int b), vec2<int> P0, vec2<int> P1, vec2<int> P2, int color_r, int color_g, int color_b)
+// тест mat4
+namespace mge{
+    template <typename T>
+    class mat4
     {
-        DrawLine(PutPixel, P0, P1, color_r, color_g, color_b);
-        DrawLine(PutPixel, P1, P2, color_r, color_g, color_b);
-        DrawLine(PutPixel, P2, P0, color_r, color_g, color_b);
+    private:
+        T matrix[4][4];
+    public:
+       mat4(T mx[4][4]) {
+           matrix = mx;
+       };
 
-    }
+       mat4<T> operator +(mat4<T> mx) {
+           T matrix_r[4][4];
 
-    void DrawCircle(void (*PutPixel)(int x, int y, int r, int g, int b), int centerX, int centerY, int radius, int color_r, int color_g, int color_b) {
-        for (int angle = 0; angle < 360; angle++) {
-            int x = centerX + static_cast<int>(radius * cos(angle * 3.14159 / 180));
-            int y = centerY + static_cast<int>(radius * sin(angle * 3.14159 / 180));
-            PutPixel(x, y, color_r, color_g, color_b);  // Рисуем каждый пиксель круга
-        }
-    }
+           for (int i = 0; i <= 4; i++) {
+               for (int f = 0; f <= 4; f++) {
+                   matrix_r[i][f] = matrix[i][f] + mx[i][f];
+               }
+           }
+           return mat4(matrix_r);
+
+       }
+
+       vec3<T> operator *(vec3<T> v) {
+           return vec3<T>(
+               v.x * matrix[0][0] + v.y * matrix[0][1] + v.z * matrix[0][2] + v.w * matrix[0][3],
+               v.x * matrix[1][0] + v.y * matrix[1][1] + v.z * matrix[1][2] + v.w * matrix[1][3],
+               v.x * matrix[2][0] + v.y * matrix[2][1] + v.z * matrix[2][2] + v.w * matrix[2][3],
+               v.x * matrix[3][0] + v.y * matrix[3][1] + v.z * matrix[3][2] + v.w * matrix[3][3]
+           );
+       }
+
+    };
 }
-
 // #include <iostream>
 // класс model 
 namespace mge {
@@ -275,17 +233,150 @@ namespace mge {
         }
     }
 }
+// !!! зависит от vec2 котоорый описан выше *("MGE/math/vec2")_vec2*
+// тест функций отрисовки без rgbcolor (если все работает -> движок)
+namespace mge {
+    int* interpolated(int i0, int d0, int i1, int d1, int& size) {
+        size = abs(i1 - i0) + 1; // Количество интерполированных значений
+        int* values = new int[size]; // Создаем массив нужного размера
 
+        // Проверяем, если i0 равно i1
+        if (i0 == i1) {
+            values[0] = d0; // Добавляем d0 в массив
+        }
+        else {
+            int delta = d1 - d0;
+            for (int i = 0; i < size; ++i) {
+                values[i] = d0 + (delta * i) / (i1 - i0); // Линейная интерполяция
+            }
+        }
 
+        return values; // Возвращаем массив
+        delete[] values;
+    }
+
+    void DrawLine(void (*PutPixel)(int x, int y, int r, int g, int b), vec2<int> P0, vec2<int> P1, int color_r, int color_g, int color_b) {
+        int dx = P1.x - P0.x;
+        int dy = P1.y - P0.y;
+
+        if (abs(dx) > abs(dy)) {
+            if (P0.x > P1.x) {
+                swap(P0, P1);
+            }
+
+            int size;
+            int* ys = interpolated(P0.x, P0.y, P1.x, P1.y, size);
+
+            for (int x = P0.x; x <= P1.x; ++x) {
+                int i = x - P0.x;
+                PutPixel(x, ys[i], color_r, color_g, color_b);
+            }
+
+            delete[] ys; // Освобождаем память
+        }
+        else {
+            if (P0.y > P1.y) {
+                swap(P0, P1);
+            }
+
+            int size;
+            int* xs = interpolated(P0.y, P0.x, P1.y, P1.x, size);
+
+            for (int y = P0.y; y <= P1.y; ++y) {
+                int i = y - P0.y;
+                PutPixel(xs[i], y, color_r, color_g, color_b);
+            }
+
+            delete[] xs; // Освобождаем память
+        }
+    }
+
+    void DrawWireframeTringle(void (*PutPixel)(int x, int y, int r, int g, int b), vec2<int> P0, vec2<int> P1, vec2<int> P2, int color_r = 0, int color_g = 0, int color_b = 0)
+    {
+        DrawLine(PutPixel, P0, P1, color_r, color_g, color_b);
+        DrawLine(PutPixel, P1, P2, color_r, color_g, color_b);
+        DrawLine(PutPixel, P2, P0, color_r, color_g, color_b);
+
+    }
+
+    void DrawCircle(void (*PutPixel)(int x, int y, int r, int g, int b), int centerX, int centerY, int radius, int color_r, int color_g, int color_b) {
+        for (int angle = 0; angle < 360; angle++) {
+            int x = centerX + static_cast<int>(radius * cos(angle * 3.14159 / 180));
+            int y = centerY + static_cast<int>(radius * sin(angle * 3.14159 / 180));
+            PutPixel(x, y, color_r, color_g, color_b);  // Рисуем каждый пиксель круга
+        }
+    }
+}
+
+namespace mge {
+    vec2<int> ViewportToCanvas(vec2<float> p, float Cw = 500, float Vw = 1, float Ch = 500, float Vh = 1) {
+        return vec2<int>((int)(p.x * Cw / Vw), (int)(p.y * Ch / Vh));
+    }
+
+    vec2<int> ProjectVertex(vec3<float> v, float d = 1) {
+        return ViewportToCanvas(vec2<float>(v.x * d / v.z, v.y * d / v.z));
+    }
+
+    void RenderTriengle(void (*PutPixel)(int x, int y, int r, int g, int b), Triangles<int> triangle, vec2<int>* project) {
+        DrawWireframeTringle(PutPixel,
+            project[triangle.n1],
+            project[triangle.n2],
+            project[triangle.n3]);
+    }
+
+    void RenderObject(void (*PutPixel)(int x, int y, int r, int g, int b), Model& model) {
+        vec2<int>* projected = new vec2<int>[0];
+        int size = 0;
+
+        for (int i = 0; i < model.getVertexCount(); i++) {
+            addElement(projected, size, ProjectVertex(model.getVertex(i)));
+        }
+
+        for (int i = 0; i < model.getTrianglsCount(); i++) {
+            RenderTriengle(PutPixel, model.getTriangls(i), projected);
+        }
+
+        delete[] projected;
+    }
+}
 
 
 int main() {
     InitializeWindow(500, 500);
 
-    while (IsWindowOpen()) {
-        ClearScreen(0, 255, 0);
+    mge::vec3<float> vertices[8] = {
+        mge::vec3<float>(1, 1, 1),   // Вершина 0
+        mge::vec3<float>(-1, 1, 1),  // Вершина 1
+        mge::vec3<float>(-1, -1, 1), // Вершина 2
+        mge::vec3<float>(1, -1, 1),  // Вершина 3
+        mge::vec3<float>(1, 1, -1),  // Вершина 4
+        mge::vec3<float>(-1, 1, -1), // Вершина 5
+        mge::vec3<float>(-1, -1, -1),// Вершина 6
+        mge::vec3<float>(1, -1, -1)  // Вершина 7
+    };
 
-        mge::DrawCircle(DrawPixel,  0,  0,  50, 50, 50, 50);
+    mge::Triangles<int> triangles[12] = {
+        mge::Triangles<int>{0, 1, 2}, // Передняя гра грань 0
+        mge::Triangles<int>{0, 2, 3}, // Передняя гра грань 1
+        mge::Triangles<int>{4, 5, 6}, // Задняя гра грани 0
+        mge::Triangles<int>{4, 6, 7}, // Задняя гра грани 1
+        mge::Triangles<int>{1, 5, 6}, // Левый грань 0
+        mge::Triangles<int>{1, 6, 2}, // Левый грань 1
+        mge::Triangles<int>{0, 4, 7}, // Правый грань 0
+        mge::Triangles<int>{0, 7, 3}, // Правый грань 1
+        mge::Triangles<int>{4, 5, 1}, // Верхний грань 0
+        mge::Triangles<int>{4, 1, 0}, // Верхний грань 1
+        mge::Triangles<int>{2, 6, 7}, // Нижний грань 0
+        mge::Triangles<int>{2, 7, 3}  // Нижний грань 1
+    };
+
+    mge::Model cube(vertices, 8, triangles, 12);
+    cube.move(mge::vec3<float>(0, 0, 10));
+
+    while (IsWindowOpen()) {
+        ClearScreen(0, 100, 100);
+
+        RenderObject(DrawPixel, cube);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Задержка для снижения нагрузки на CPU
     }
