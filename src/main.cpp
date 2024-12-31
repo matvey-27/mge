@@ -441,7 +441,7 @@ namespace mge {
         // Инициализация переменных
         float width;        // Ширина окна
         float height;       // Высота окна
-        float FOVy = 25.0f * (M_PI / 180.0f); // Перевод ФОВ в радианы
+        float FOVy = 45.0f * (M_PI / 180.0f); // Перевод ФОВ в радианы
         float zNear = 0.1f;          // Ближняя плоскость
         float zFar = 100.0f;        // Дальняя плоскость
         float aspect;
@@ -471,11 +471,18 @@ namespace mge {
             u = f * s;
             u.w = 0;
 
+            // float view_matrix[4][4] = {
+            //     { s.x, s.y, s.z, 0 },
+            //     { u.x, u.y, u.z, 0 },
+            //     { -f.x, -f.y, -f.z, 0 },
+            //     { -dot(s, pos), -dot(u, pos), dot(f, pos), 1 }
+            // };
+
             float view_matrix[4][4] = {
-                { s.x, s.y, s.z, 0 },
-                { u.x, u.y, u.z, 0 },
-                { -f.x, -f.y, -f.z, 0 },
-                { -dot(s, pos), -dot(u, pos), dot(f, pos), 1 }
+                {s.x, s.y, s.z, -dot(s, pos)},
+                {u.x, u.y, u.z, -dot(u, pos)},
+                {-f.x, -f.y, -f.z, dot(f, pos)},
+                {0, 0, 0, 1}
             };
 
             this->view_matrix = mat4<float>(view_matrix);
@@ -510,22 +517,31 @@ namespace mge {
         };
 
         // конструктор по высоте, ширине, полю зрения и z буферам
-        camera(float w, float h, float FOVy, float zNear, float zFar, vec3<float> pos = vec3<float>(0, 0, 0), vec3<float> target = vec3<float>(0, 0, -1), vec3<float> up = vec3<float>(0, 1, 0)) : aspect(w/h), FOVy(FOVy), zNear(zNear), zFar(zFar), pos(pos), target(target), up(up) {
+        camera(float w, float h, float FOVy, float zNear, float zFar, vec3<float> pos = vec3<float>(0, 0, 0), vec3<float> target = vec3<float>(0, 0,0), vec3<float> up = vec3<float>(0, 1, 0)) : aspect(w/h), FOVy(FOVy), zNear(zNear), zFar(zFar), pos(pos), target(target), up(up) {
             updateVectors();
         };
+
+        void updateMatrix(vec3<float> pos = vec3<float>(0, 0, 0), vec3<float> target = vec3<float>(0, 0, -1), vec3<float> up = vec3<float>(0, 1, 0)) {
+            this->pos = pos;
+            this->target = target;
+            this->up = up;
+
+            updateVectors();
+        }
         
         vec2<int> test3D(vec3<float> v){
-            v = view_matrix * v;
-            v = projection_matrix * v;
-            return vec2<int>(
-                (int)(v.x / v.w),
-                (int)(v.y / v.w));
+        v = view_matrix * v;
+        v = projection_matrix * v;
+        return vec2<int>(
+            (int)(v.x / v.w),
+            (int)(v.y / v.w));
         };
+
     };
 }
 
 int main() {
-    InitializeWindow(500, 500);
+    InitializeWindow(800,600);
 
     mge::vec3<float> vertices[8] = {
         mge::vec3<float>(2, 2, 2),   // Вершина 0
@@ -539,24 +555,32 @@ int main() {
     };
 
     mge::Triangles<int> triangles[12] = {
-        mge::Triangles<int>{0, 1, 2, 255, }, // Передняя грань 0
-        mge::Triangles<int>{0, 2, 3, 255, }, // Передняя грань 1
-        mge::Triangles<int>{4, 5, 6, 255, }, // Задняя грань 0
-        mge::Triangles<int>{4, 6, 7, 255, }, // Задняя грань 1
-        mge::Triangles<int>{1, 5, 6, 255, }, // Левый грань 0
-        mge::Triangles<int>{1, 6, 2, 255, }, // Левый грань 1
-        mge::Triangles<int>{0, 4, 7, 255, }, // Правый грань 0
-        mge::Triangles<int>{0, 7, 3, 255, }, // Правый грань 1
-        mge::Triangles<int>{4, 5, 1, 255, }, // Верхний грань 0
-        mge::Triangles<int>{4, 1, 0, 255, }, // Верхний грань 1
-        mge::Triangles<int>{2, 6, 7, 255}, // Нижний грань 0
-        mge::Triangles<int>{2, 7, 3, 255}  // Нижний грань 1
+        mge::Triangles<int>{0, 1, 2, }, // Передняя грань 0
+        mge::Triangles<int>{0, 2, 3, }, // Передняя грань 1
+        mge::Triangles<int>{4, 5, 6, }, // Задняя грань 0
+        mge::Triangles<int>{4, 6, 7, }, // Задняя грань 1
+        mge::Triangles<int>{1, 5, 6, }, // Левый грань 0
+        mge::Triangles<int>{1, 6, 2, }, // Левый грань 1
+        mge::Triangles<int>{0, 4, 7, }, // Правый грань 0
+        mge::Triangles<int>{0, 7, 3, }, // Правый грань 1
+        mge::Triangles<int>{4, 5, 1, }, // Верхний грань 0
+        mge::Triangles<int>{4, 1, 0, }, // Верхний грань 1
+        mge::Triangles<int>{2, 6, 7, }, // Нижний грань 0
+        mge::Triangles<int>{2, 7, 3, }  // Нижний грань 1
     };
 
-    mge::Model cube(vertices, 8, triangles, 12);
-    cube.move(mge::vec3<float>(0, 0, -0.2));
+    // mge::Model cube(vertices, 8, triangles, 12);
+    // cube.move(mge::vec3<float>(0, 0, 3));
+    // //mge::camera cam(500, 500);
+    // mge::camera cam(800, 600, 25.0f * (mge::M_PI / 180.0f), 0.1f, 1000.0f, mge::vec3<float>(0, 0, 0), mge::vec3<float>(0, 0, 3));
 
-    mge::camera cam(500, 500);
+
+
+    mge::Model cube(vertices, 8, triangles, 12);
+    cube.move(mge::vec3<float>(0, 0, 0));
+    mge::camera cam(800, 600, 20.0f * (mge::M_PI / 180.0f), 0.1f, 1000.0f, mge::vec3<float>(0, -2, -3), mge::vec3<float>(0, 0, 0));
+
+
 
     while (IsWindowOpen()) {
         ClearScreen(0, 100, 100);
