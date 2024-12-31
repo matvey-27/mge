@@ -5,6 +5,7 @@
 
 #include "../include/GraphicsLibrarry/libs.h"
 #include "../include/MGE/Utils.hpp"
+#include "matrix.h"
 
 #include <stdexcept>
 #include <thread>
@@ -85,17 +86,17 @@ namespace mge {
             return vector1.x * vector2.x + vector1.y * vector2.y + vector1.z * vector2.z;
     }
 }
-// тест mat4
+// тест mat4x4
 namespace mge{
     template <typename T>
-    class mat4
+    class mat4x4
     {
     private:
         T matrix[4][4];
     public:
-     mat4(){};
+     mat4x4(){};
 
-    mat4(T mx[4][4]) {
+    mat4x4(T mx[4][4]) {
         for (int i = 0; i < 4; ++i) {
             for (int j = 0; j < 4; ++j) {
                 matrix[i][j] = mx[i][j];
@@ -103,7 +104,7 @@ namespace mge{
         }
     }
 
-    mat4<T> operator +(mat4<T> mx) {
+    mat4x4<T> operator +(mat4x4<T> mx) {
         T matrix_r[4][4];
 
         for (int i = 0; i <= 4; i++) {
@@ -111,7 +112,7 @@ namespace mge{
                 matrix_r[i][f] = matrix[i][f] + mx[i][f];
             }
         }
-        return mat4(matrix_r);
+        return mat4x4(matrix_r);
 
     }
 
@@ -298,7 +299,7 @@ namespace mge {
             { 0, std::sin(ax),  std::cos(ax),  0 },
             { 0,         0,          0, 1 }
         };
-        mat4<float> rx(rotationMatrixX);
+        mat4x4<float> rx(rotationMatrixX);
 
         // Матрица для вращения по Y
         float rotationMatrixY[4][4] = {
@@ -307,7 +308,7 @@ namespace mge {
             { -std::sin(ay), 0, std::cos(ay), 0 },
             { 0,        0, 0,       1 }
         };
-        mat4<float> ry(rotationMatrixY);
+        mat4x4<float> ry(rotationMatrixY);
         
         // Матрица для вращения по Z
         float rotationMatrixZ[4][4] = {
@@ -316,7 +317,7 @@ namespace mge {
             { 0,        0,       1, 0 },
             { 0,        0,       0, 1 }
         };
-        mat4<float> rz(rotationMatrixZ);
+        mat4x4<float> rz(rotationMatrixZ);
 
         // Применение вращения к вершинам
         for (size_t i = 0; i < count_v; ++i) {
@@ -485,7 +486,7 @@ namespace mge {
                 {0, 0, 0, 1}
             };
 
-            this->view_matrix = mat4<float>(view_matrix);
+            this->view_matrix = mat4x4<float>(view_matrix);
 
             float projection_matrix[4][4] = {
                 { 1 / (aspect * std::tan(FOVy/2)), 0, 0, 0 },
@@ -494,12 +495,12 @@ namespace mge {
                 { 0, 0, -1 * (2 * zFar * zNear) / (zFar - zNear), 0}
             };
 
-            this->projection_matrix = mat4<float>(projection_matrix);
+            this->projection_matrix = mat4x4<float>(projection_matrix);
         }
 
     public:
-        mat4<float> view_matrix;
-        mat4<float> projection_matrix;
+        mat4x4<float> view_matrix;
+        mat4x4<float> projection_matrix;
 
         // конструктор по высоте и ширине
         camera(float w, float h, vec3<float> pos = vec3<float>(0, 0, 0), vec3<float> target = vec3<float>(0, 0, -1), vec3<float> up = vec3<float>(0, 1, 0, 0)) : aspect(w/h), pos(pos), target(target), up(up) {
@@ -529,13 +530,114 @@ namespace mge {
             updateVectors();
         }
         
-        vec2<int> test3D(vec3<float> v){
+        vec2<int> renderVertices(vec3<float> v){
         v = view_matrix * v;
         v = projection_matrix * v;
         return vec2<int>(
             (int)(v.x / v.w),
             (int)(v.y / v.w));
         };
+
+        void rotateCamera(float ax_deg, float ay_deg, float az_deg) {
+            // Преобразование углов из градусов в радианы
+            float ax = ax_deg * (M_PI / 180.0f);
+            float ay = ay_deg * (M_PI / 180.0f);
+            float az = az_deg * (M_PI / 180.0f);
+
+            // Матрица для вращения по X
+            float rotationMatrixX[4][4] = {
+                        { 1,         0,          0, 0 },
+                        { 0, std::cos(ax), -std::sin(ax),  0 },
+                        { 0, std::sin(ax),  std::cos(ax),  0 },
+                        { 0,         0,          0, 1 }
+                };
+                mat4x4<float> rx(rotationMatrixX);
+
+                // Матрица для вращения по Y
+                float rotationMatrixY[4][4] = {
+                    { std::cos(ay),  0, std::sin(ay), 0 },
+                    { 0,        1, 0,       0 },
+                    { -std::sin(ay), 0, std::cos(ay), 0 },
+                    { 0,        0, 0,       1 }
+                };
+                mat4x4<float> ry(rotationMatrixY);
+                
+                // Матрица для вращения по Z
+                float rotationMatrixZ[4][4] = {
+                    { std::cos(az), -std::sin(az), 0, 0 },
+                    { std::sin(az),  std::cos(az), 0, 0 },
+                    { 0,        0,       1, 0 },
+                    { 0,        0,       0, 1 }
+                };
+                mat4x4<float> rz(rotationMatrixZ);
+
+                // Применяем вращение к векторам f, s и u по очереди
+                f = rx * f;
+                f = ry * f;
+                f = rz * f;
+                
+                s = rx * s;
+                s = ry * s;
+                s = rz * s;
+
+                u = rx * u;
+                u = ry * u;
+                u = rz * u;
+
+                // После вращения обновляем вектора и матрицы
+                updateVectors();
+        }
+
+        void rotateCameraAroundPoint(float ax_deg, float ay_deg, float az_deg, vec3<float> rotationPoint = vec3<float>(0, 0, 0)) {
+            // Преобразование углов из градусов в радианы
+            float ax = ax_deg * (M_PI / 180.0f);
+            float ay = ay_deg * (M_PI / 180.0f);
+            float az = az_deg * (M_PI / 180.0f);
+
+            // 1. Перемещаем камеру в систему координат, где точка вращения в начале (центр вращения - это точка)
+            vec3<float> localPos = pos - rotationPoint;
+
+            // 2. Матрицы вращения по осям X, Y, Z
+            // Матрица для вращения по X
+            float rotationMatrixX[4][4] = {
+                { 1,         0,          0, 0 },
+                { 0, std::cos(ax), -std::sin(ax),  0 },
+                { 0, std::sin(ax),  std::cos(ax),  0 },
+                { 0,         0,          0, 1 }
+            };
+            mat4x4<float> rx(rotationMatrixX);
+
+            // Матрица для вращения по Y
+            float rotationMatrixY[4][4] = {
+                { std::cos(ay),  0, std::sin(ay), 0 },
+                { 0,        1, 0,       0 },
+                { -std::sin(ay), 0, std::cos(ay), 0 },
+                { 0,        0, 0,       1 }
+            };
+            mat4x4<float> ry(rotationMatrixY);
+            
+            // Матрица для вращения по Z
+            float rotationMatrixZ[4][4] = {
+                { std::cos(az), -std::sin(az), 0, 0 },
+                { std::sin(az),  std::cos(az), 0, 0 },
+                { 0,        0,       1, 0 },
+                { 0,        0,       0, 1 }
+            };
+            mat4x4<float> rz(rotationMatrixZ);
+
+            // 3. Применяем вращение к позиции камеры (поочередно применяем матрицы вращения)
+            localPos = rx * localPos;
+            localPos = ry * localPos;
+            localPos = rz * localPos;
+
+            // 4. Возвращаем камеру обратно в исходную систему координат
+            pos = localPos + rotationPoint;
+
+            // 5. Обновляем вектора ориентации камеры
+            updateVectors();
+        }
+
+
 
     };
 }
@@ -588,12 +690,12 @@ int main() {
         // Отрисовка куба
         for (int i = 0; i < cube.getTrianglsCount(); i++) {
             DrawWireframeTringle(DrawPixel,
-            cam.test3D(cube.getVertex(cube.getTriangls(i).n1)),
-            cam.test3D(cube.getVertex(cube.getTriangls(i).n2)),
-            cam.test3D(cube.getVertex(cube.getTriangls(i).n3)));
+            cam.renderVertices(cube.getVertex(cube.getTriangls(i).n1)),
+            cam.renderVertices(cube.getVertex(cube.getTriangls(i).n2)),
+            cam.renderVertices(cube.getVertex(cube.getTriangls(i).n3)));
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Задержка для снижения нагрузки на CPU
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
     return 0; // Завершаем программу
