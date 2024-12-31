@@ -534,58 +534,9 @@ namespace mge {
             (int)(v.x / v.w),
             (int)(v.y / v.w));
         };
-
-        void rotateCamera(float ax_deg, float ay_deg, float az_deg) {
-            // Преобразование углов из градусов в радианы
-            float ax = ax_deg * (M_PI / 180.0f);
-            float ay = ay_deg * (M_PI / 180.0f);
-            float az = az_deg * (M_PI / 180.0f);
-
-            // Матрица для вращения по X
-            float rotationMatrixX[4][4] = {
-                        { 1,         0,          0, 0 },
-                        { 0, std::cos(ax), -std::sin(ax),  0 },
-                        { 0, std::sin(ax),  std::cos(ax),  0 },
-                        { 0,         0,          0, 1 }
-                };
-                mat4x4<float> rx(rotationMatrixX);
-
-                // Матрица для вращения по Y
-                float rotationMatrixY[4][4] = {
-                    { std::cos(ay),  0, std::sin(ay), 0 },
-                    { 0,        1, 0,       0 },
-                    { -std::sin(ay), 0, std::cos(ay), 0 },
-                    { 0,        0, 0,       1 }
-                };
-                mat4x4<float> ry(rotationMatrixY);
-                
-                // Матрица для вращения по Z
-                float rotationMatrixZ[4][4] = {
-                    { std::cos(az), -std::sin(az), 0, 0 },
-                    { std::sin(az),  std::cos(az), 0, 0 },
-                    { 0,        0,       1, 0 },
-                    { 0,        0,       0, 1 }
-                };
-                mat4x4<float> rz(rotationMatrixZ);
-
-                // Применяем вращение к векторам f, s и u по очереди
-                f = rx * f;
-                f = ry * f;
-                f = rz * f;
-                
-                s = rx * s;
-                s = ry * s;
-                s = rz * s;
-
-                u = rx * u;
-                u = ry * u;
-                u = rz * u;
-
-                // После вращения обновляем вектора и матрицы
-                updateVectors();
-        }
-
-        void rotateCameraAroundPoint(float ax_deg, float ay_deg, float az_deg, vec3<float> rotationPoint = vec3<float>(0, 0, -5)) {
+        
+        // поворот позиции не изменяя напровление 
+        void rotatePosCameraAroundPoint(float ax_deg, float ay_deg, float az_deg, vec3<float> rotationPoint = vec3<float>(0, 0, 0)) {
             // Преобразование углов из градусов в радианы
             float ax = ax_deg * (M_PI / 180.0f);
             float ay = ay_deg * (M_PI / 180.0f);
@@ -633,6 +584,56 @@ namespace mge {
             // 5. Обновляем вектора ориентации камеры
             updateVectors();
         }
+
+        // поворот направления не меняя позиции
+        void rotateTargetCameraAroundPoint(float ax_deg, float ay_deg, float az_deg, vec3<float> rotationPoint = vec3<float>(0, 0, 0)) {
+            // Преобразование углов из градусов в радианы
+            float ax = ax_deg * (M_PI / 180.0f);
+            float ay = ay_deg * (M_PI / 180.0f);
+            float az = az_deg * (M_PI / 180.0f);
+
+            // 1. Матрицы вращения по осям X, Y, Z
+            // Матрица для вращения по X
+            float rotationMatrixX[4][4] = {
+                { 1,         0,          0, 0 },
+                { 0, std::cos(ax), -std::sin(ax),  0 },
+                { 0, std::sin(ax),  std::cos(ax),  0 },
+                { 0,         0,          0, 1 }
+            };
+            mat4x4<float> rx(rotationMatrixX);
+
+            // Матрица для вращения по Y
+            float rotationMatrixY[4][4] = {
+                { std::cos(ay),  0, std::sin(ay), 0 },
+                { 0,        1, 0,       0 },
+                { -std::sin(ay), 0, std::cos(ay), 0 },
+                { 0,        0, 0,       1 }
+            };
+            mat4x4<float> ry(rotationMatrixY);
+            
+            // Матрица для вращения по Z
+            float rotationMatrixZ[4][4] = {
+                { std::cos(az), -std::sin(az), 0, 0 },
+                { std::sin(az),  std::cos(az), 0, 0 },
+                { 0,        0,       1, 0 },
+                { 0,        0,       0, 1 }
+            };
+            mat4x4<float> rz(rotationMatrixZ);
+
+            // 2. умнажение на матрицы target и up
+            this->target = rz * (ry * (rx * target));
+            this->up = rz * (ry * (rx * up));
+
+            // 3. Обновляем вектора ориентации камеры
+            updateVectors();
+        }
+
+        // поворот направления и позиции
+        void rotateCameraAroundPoint(float ax_deg, float ay_deg, float az_deg, vec3<float> rotationPoint = vec3<float>(0, 0, 0)) {
+            rotatePosCameraAroundPoint(ax_deg, ay_deg, az_deg, rotationPoint);
+            rotateTargetCameraAroundPoint(ax_deg, ay_deg, az_deg, rotationPoint);
+        }
+
     };
 }
 
@@ -671,14 +672,14 @@ int main() {
     cube.move(mge::vec3<float>(0, 0, 0));
 
     // Инициализация камеры
-    mge::camera cam(800, 600, 10.0f * (mge::M_PI / 180.0f), 0.1f, 1000.0f, mge::vec3<float>(0, 0, -5), mge::vec3<float>(0, 0, 0));
+    mge::camera cam(800, 600, 100.0f * (mge::M_PI / 180.0f), 0.1f, 1000.0f, mge::vec3<float>(0, 0, -5), mge::vec3<float>(0, 0, 0));
 
     // Переменные для углов вращения камеры
     float angleX = 0.0f;
     float angleY = 0.0f;
     float radius = 5.0f;  // Радиус окружности, по которой будет двигаться камера
 
-    cam.rotateCameraAroundPoint(45, 0,  0);
+    cam.rotatePosCameraAroundPoint(45, 0,  0);
 
     while (IsWindowOpen()) {
         ClearScreen(0, 100, 100);
@@ -692,7 +693,7 @@ int main() {
         // float camY = radius * cos(angleX * (mge::M_PI / 180.0f));
         // float camZ = radius * sin(angleY * (mge::M_PI / 180.0f)) * sin(angleX * (mge::M_PI / 180.0f));
 
-        cam.rotateCameraAroundPoint(0, angleY, 0);
+        cam.rotateTargetCameraAroundPoint(angleX, angleY, 0, cam.pos);
 
         // Обновляем позицию камеры
         //cam.updateMatrix(mge::vec3<float>(camX, camY, camZ), mge::vec3<float>(0, 0, 0), mge::vec3<float>(0, 1, 0));
