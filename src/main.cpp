@@ -645,6 +645,7 @@ namespace mge {
 int main() {
     InitializeWindow(800,600);
 
+    // Вершины куба
     mge::vec3<float> vertices[8] = {
         mge::vec3<float>(2, 2, 2),   // Вершина 0
         mge::vec3<float>(-2, 2, 2),  // Вершина 1
@@ -656,36 +657,47 @@ int main() {
         mge::vec3<float>(2, -2, -2)  // Вершина 7
     };
 
+    // Треугольники для построения куба
     mge::Triangles<int> triangles[12] = {
-        mge::Triangles<int>{0, 1, 2, }, // Передняя грань 0
-        mge::Triangles<int>{0, 2, 3, }, // Передняя грань 1
-        mge::Triangles<int>{4, 5, 6, }, // Задняя грань 0
-        mge::Triangles<int>{4, 6, 7, }, // Задняя грань 1
-        mge::Triangles<int>{1, 5, 6, }, // Левый грань 0
-        mge::Triangles<int>{1, 6, 2, }, // Левый грань 1
-        mge::Triangles<int>{0, 4, 7, }, // Правый грань 0
-        mge::Triangles<int>{0, 7, 3, }, // Правый грань 1
-        mge::Triangles<int>{4, 5, 1, }, // Верхний грань 0
-        mge::Triangles<int>{4, 1, 0, }, // Верхний грань 1
-        mge::Triangles<int>{2, 6, 7, }, // Нижний грань 0
-        mge::Triangles<int>{2, 7, 3, }  // Нижний грань 1
+        mge::Triangles<int>{0, 1, 2}, // Передняя грань 0
+        mge::Triangles<int>{0, 2, 3}, // Передняя грань 1
+        mge::Triangles<int>{4, 5, 6}, // Задняя грань 0
+        mge::Triangles<int>{4, 6, 7}, // Задняя грань 1
+        mge::Triangles<int>{1, 5, 6}, // Левый грань 0
+        mge::Triangles<int>{1, 6, 2}, // Левый грань 1
+        mge::Triangles<int>{0, 4, 7}, // Правый грань 0
+        mge::Triangles<int>{0, 7, 3}, // Правый грань 1
+        mge::Triangles<int>{4, 5, 1}, // Верхний грань 0
+        mge::Triangles<int>{4, 1, 0}, // Верхний грань 1
+        mge::Triangles<int>{2, 6, 7}, // Нижний грань 0
+        mge::Triangles<int>{2, 7, 3}  // Нижний грань 1
     };
-
-    // mge::Model cube(vertices, 8, triangles, 12);
-    // cube.move(mge::vec3<float>(0, 0, 3));
-    // //mge::camera cam(500, 500);
-    // mge::camera cam(800, 600, 25.0f * (mge::M_PI / 180.0f), 0.1f, 1000.0f, mge::vec3<float>(0, 0, 0), mge::vec3<float>(0, 0, 3));
-
-
 
     mge::Model cube(vertices, 8, triangles, 12);
     cube.move(mge::vec3<float>(0, 0, 0));
-    mge::camera cam(800, 600, 20.0f * (mge::M_PI / 180.0f), 0.1f, 1000.0f, mge::vec3<float>(0, -2, -3), mge::vec3<float>(0, 0, 0));
 
+    // Инициализация камеры
+    mge::camera cam(800, 600, 10.0f * (mge::M_PI / 180.0f), 0.1f, 1000.0f, mge::vec3<float>(0, 0, -5), mge::vec3<float>(0, 0, 0));
 
+    // Переменные для углов вращения камеры
+    float angleX = 0.0f;
+    float angleY = 0.0f;
+    float radius = 5.0f;  // Радиус окружности, по которой будет двигаться камера
 
     while (IsWindowOpen()) {
         ClearScreen(0, 100, 100);
+
+        // Обновляем углы вращения камеры
+        angleX += 0.9f; // Поворот по оси X (в градусах)
+        angleY += 0.9f; // Поворот по оси Y (в градусах)
+
+        // Вычисляем новую позицию камеры по углам
+        float camX = radius * cos(angleY * (mge::M_PI / 180.0f)) * sin(angleX * (mge::M_PI / 180.0f));
+        float camY = radius * cos(angleX * (mge::M_PI / 180.0f));
+        float camZ = radius * sin(angleY * (mge::M_PI / 180.0f)) * sin(angleX * (mge::M_PI / 180.0f));
+
+        // Обновляем позицию камеры
+        cam.updateMatrix(mge::vec3<float>(camX, camY, camZ), mge::vec3<float>(0, 0, 0), mge::vec3<float>(0, 1, 0));
 
         // Отрисовка куба
         for (int i = 0; i < cube.getTrianglsCount(); i++) {
