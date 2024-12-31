@@ -443,20 +443,15 @@ namespace mge {
         float width;        // Ширина окна
         float height;       // Высота окна
         float FOVy = 45.0f * (M_PI / 180.0f); // Перевод ФОВ в радианы
+
         float zNear = 0.1f;          // Ближняя плоскость
         float zFar = 100.0f;        // Дальняя плоскость
         float aspect;
-        
-        // - pos: Позиция камеры в мировом пространстве.
-        // - target: Точка, на которую ориентирована камера (например, объект, который мы хотим видеть).
-        // - up: Вектор "вверх", который определяет, что считается "верхом" для камеры (обычно вектор (0, 1, 0) для стандартной ориентации).
+
         // - f: Направляющий вектор, указывающий направление взгляда камеры.
         // - s: Вектор направления вправо, который определяет горизонтальную ориентацию камеры.
         // - u: Вектор, определяющий направление вверх для камеры, основанный на векторах f и s.
 
-        vec3<float> target;
-        vec3<float> pos;
-        vec3<float> up;
         vec3<float> f;
         vec3<float> s;
         vec3<float> u;
@@ -472,12 +467,6 @@ namespace mge {
             u = f * s;
             u.w = 0;
 
-            // float view_matrix[4][4] = {
-            //     { s.x, s.y, s.z, 0 },
-            //     { u.x, u.y, u.z, 0 },
-            //     { -f.x, -f.y, -f.z, 0 },
-            //     { -dot(s, pos), -dot(u, pos), dot(f, pos), 1 }
-            // };
 
             float view_matrix[4][4] = {
                 {s.x, s.y, s.z, -dot(s, pos)},
@@ -498,7 +487,15 @@ namespace mge {
             this->projection_matrix = mat4x4<float>(projection_matrix);
         }
 
-    public:
+    public:        
+        // - pos: Позиция камеры в мировом пространстве.
+        // - target: Точка, на которую ориентирована камера (например, объект, который мы хотим видеть).
+        // - up: Вектор "вверх", который определяет, что считается "верхом" для камеры (обычно вектор (0, 1, 0) для стандартной ориентации).
+        
+        vec3<float> target;
+        vec3<float> pos;
+        vec3<float> up;
+
         mat4x4<float> view_matrix;
         mat4x4<float> projection_matrix;
 
@@ -588,7 +585,7 @@ namespace mge {
                 updateVectors();
         }
 
-        void rotateCameraAroundPoint(float ax_deg, float ay_deg, float az_deg, vec3<float> rotationPoint = vec3<float>(0, 0, 0)) {
+        void rotateCameraAroundPoint(float ax_deg, float ay_deg, float az_deg, vec3<float> rotationPoint = vec3<float>(0, 0, -5)) {
             // Преобразование углов из градусов в радианы
             float ax = ax_deg * (M_PI / 180.0f);
             float ay = ay_deg * (M_PI / 180.0f);
@@ -636,9 +633,6 @@ namespace mge {
             // 5. Обновляем вектора ориентации камеры
             updateVectors();
         }
-
-
-
     };
 }
 
@@ -684,6 +678,8 @@ int main() {
     float angleY = 0.0f;
     float radius = 5.0f;  // Радиус окружности, по которой будет двигаться камера
 
+    cam.rotateCameraAroundPoint(45, 0,  0);
+
     while (IsWindowOpen()) {
         ClearScreen(0, 100, 100);
 
@@ -692,12 +688,14 @@ int main() {
         angleY += 0.9f; // Поворот по оси Y (в градусах)
 
         // Вычисляем новую позицию камеры по углам
-        float camX = radius * cos(angleY * (mge::M_PI / 180.0f)) * sin(angleX * (mge::M_PI / 180.0f));
-        float camY = radius * cos(angleX * (mge::M_PI / 180.0f));
-        float camZ = radius * sin(angleY * (mge::M_PI / 180.0f)) * sin(angleX * (mge::M_PI / 180.0f));
+        // float camX = radius * cos(angleY * (mge::M_PI / 180.0f)) * sin(angleX * (mge::M_PI / 180.0f));
+        // float camY = radius * cos(angleX * (mge::M_PI / 180.0f));
+        // float camZ = radius * sin(angleY * (mge::M_PI / 180.0f)) * sin(angleX * (mge::M_PI / 180.0f));
+
+        cam.rotateCameraAroundPoint(0, angleY, 0);
 
         // Обновляем позицию камеры
-        cam.updateMatrix(mge::vec3<float>(camX, camY, camZ), mge::vec3<float>(0, 0, 0), mge::vec3<float>(0, 1, 0));
+        //cam.updateMatrix(mge::vec3<float>(camX, camY, camZ), mge::vec3<float>(0, 0, 0), mge::vec3<float>(0, 1, 0));
 
         // Отрисовка куба
         for (int i = 0; i < cube.getTrianglsCount(); i++) {
@@ -707,7 +705,7 @@ int main() {
             cam.renderVertices(cube.getVertex(cube.getTriangls(i).n3)));
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 
     return 0; // Завершаем программу
