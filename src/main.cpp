@@ -333,6 +333,11 @@ namespace mge {
         size = abs(i1 - i0) + 1; // Количество интерполированных значений
         int* values = new int[size]; // Создаем массив нужного размера
 
+        // Проверка на успешное выделение памяти
+        if (!values) {
+            return nullptr;
+        }
+
         // Проверяем, если i0 равно i1
         if (i0 == i1) {
             values[0] = d0; // Добавляем d0 в массив
@@ -345,9 +350,7 @@ namespace mge {
         }
 
         return values; // Возвращаем массив
-        delete[] values;
     }
-
     void DrawLine(void (*PutPixel)(int x, int y, int r, int g, int b), vec2<int> P0, vec2<int> P1, int color_r, int color_g, int color_b) {
         int dx = P1.x - P0.x;
         int dy = P1.y - P0.y;
@@ -391,6 +394,72 @@ namespace mge {
         DrawLine(PutPixel, P2, P0, color_r, color_g, color_b);
 
     }
+
+    // Функция для рисования заполненного треугольника
+    void DrawFilledTringle(void (*PutPixel)(int x, int y, int r, int g, int b), vec2<int> P0, vec2<int> P1, vec2<int> P2, int color_r = 0, int color_g = 0, int color_b = 0) {
+    // Сортировка вершин по оси Y (от верхней к нижней)
+    if (P1.y < P0.y) { std::swap(P1, P0); }
+    if (P2.y < P0.y) { std::swap(P2, P0); }
+    if (P2.y < P1.y) { std::swap(P2, P1); }
+
+    // Интерполяция координат X для каждого ребра треугольника
+    int size01;
+    int* x01 = interpolated(P0.y, P0.x, P1.y, P1.x, size01);
+    int size12;
+    int* x12 = interpolated(P1.y, P1.x, P2.y, P2.x, size12);
+    int size02;
+    int* x02 = interpolated(P0.y, P0.x, P2.y, P2.x, size02);
+
+    // Проверка на ошибки в интерполяции
+    if (x01 == nullptr || x12 == nullptr || x02 == nullptr) {
+        return;
+    }
+
+    // Разделение треугольника на левую и правую часть
+    int m = size12 / 2;
+    int* x_left;
+    int* x_right;
+
+    if (x02[m] < x12[m]) {
+        x_left = x02;
+        x_right = x12;
+    } else {
+        x_left = x12;
+        x_right = x02;
+    }
+
+    // Заполнение треугольника пикселями
+    for (int y = P0.y; y <= P2.y; y++) {
+        // Убедимся, что индексы находятся в допустимом диапазоне
+        if (y - P0.y >= size01 || y - P1.y >= size12 || y - P0.y >= size02) {
+            break;
+        }
+
+        int left_x = x_left[y - P0.y];
+        int right_x = x_right[y - P0.y];
+
+        // Если координаты выходят за пределы, их можно ограничить до макс и мин значений
+        if (left_x > right_x) {
+            std::swap(left_x, right_x);
+        }
+
+        // Рисуем пиксели на текущем уровне Y
+        for (int x = left_x; x <= right_x; x++) {
+            PutPixel(x, y, color_r, color_g, color_b);
+        }
+    }
+
+    // Освобождение памяти
+    delete[] x01;
+    delete[] x02;
+    delete[] x12;
+    delete[] x_left;
+    delete[] x_right;
+}
+
+
+
+
 
     void DrawCircle(void (*PutPixel)(int x, int y, int r, int g, int b), int centerX, int centerY, int radius, int color_r, int color_g, int color_b) {
         for (int angle = 0; angle < 360; angle++) {
@@ -527,6 +596,10 @@ namespace mge {
             updateVectors();
         }
         
+        void updateTargetMatrix(vec3<float> newTarget){
+            updateMatrix(pos, newTarget);
+        }
+        
         vec2<int> renderVertices(vec3<float> v){
         v = view_matrix * v;
         v = projection_matrix * v;
@@ -534,8 +607,7 @@ namespace mge {
             (int)(v.x / v.w),
             (int)(v.y / v.w));
         };
-        
-        // поворот позиции не изменяя напровление 
+                // поворот позиции не изменяя напровление 
         void rotatePosCameraAroundPoint(float ax_deg, float ay_deg, float az_deg, vec3<float> rotationPoint = vec3<float>(0, 0, 0)) {
             // Преобразование углов из градусов в радианы
             float ax = ax_deg * (M_PI / 180.0f);
@@ -585,53 +657,12 @@ namespace mge {
             updateVectors();
         }
 
-        // поворот направления не меняя позиции
-        void rotateTargetCameraAroundPoint(float ax_deg, float ay_deg, float az_deg, vec3<float> rotationPoint = vec3<float>(0, 0, 0)) {
-            // Преобразование углов из градусов в радианы
-            float ax = ax_deg * (M_PI / 180.0f);
-            float ay = ay_deg * (M_PI / 180.0f);
-            float az = az_deg * (M_PI / 180.0f);
-
-            // 1. Матрицы вращения по осям X, Y, Z
-            // Матрица для вращения по X
-            float rotationMatrixX[4][4] = {
-                { 1,         0,          0, 0 },
-                { 0, std::cos(ax), -std::sin(ax),  0 },
-                { 0, std::sin(ax),  std::cos(ax),  0 },
-                { 0,         0,          0, 1 }
-            };
-            mat4x4<float> rx(rotationMatrixX);
-
-            // Матрица для вращения по Y
-            float rotationMatrixY[4][4] = {
-                { std::cos(ay),  0, std::sin(ay), 0 },
-                { 0,        1, 0,       0 },
-                { -std::sin(ay), 0, std::cos(ay), 0 },
-                { 0,        0, 0,       1 }
-            };
-            mat4x4<float> ry(rotationMatrixY);
-            
-            // Матрица для вращения по Z
-            float rotationMatrixZ[4][4] = {
-                { std::cos(az), -std::sin(az), 0, 0 },
-                { std::sin(az),  std::cos(az), 0, 0 },
-                { 0,        0,       1, 0 },
-                { 0,        0,       0, 1 }
-            };
-            mat4x4<float> rz(rotationMatrixZ);
-
-            // 2. умнажение на матрицы target и up
-            this->target = rz * (ry * (rx * target));
-            this->up = rz * (ry * (rx * up));
-
-            // 3. Обновляем вектора ориентации камеры
-            updateVectors();
+        void setPos(vec3<float> v){
+            pos = v;
         }
 
-        // поворот направления и позиции
-        void rotateCameraAroundPoint(float ax_deg, float ay_deg, float az_deg, vec3<float> rotationPoint = vec3<float>(0, 0, 0)) {
-            rotatePosCameraAroundPoint(ax_deg, ay_deg, az_deg, rotationPoint);
-            rotateTargetCameraAroundPoint(ax_deg, ay_deg, az_deg, rotationPoint);
+        void move(vec3<float> v){
+            pos = pos + v;
         }
 
     };
@@ -672,39 +703,27 @@ int main() {
     cube.move(mge::vec3<float>(0, 0, 0));
 
     // Инициализация камеры
-    mge::camera cam(800, 600, 100.0f * (mge::M_PI / 180.0f), 0.1f, 1000.0f, mge::vec3<float>(0, 0, -5), mge::vec3<float>(0, 0, 0));
+    // mge::camera cam(800, 600, 10.0f * (mge::M_PI / 180.0f), 0.1f, 1000.0f, mge::vec3<float>(0, 0, -5), mge::vec3<float>(0, 0, 0));
 
     // Переменные для углов вращения камеры
     float angleX = 0.0f;
     float angleY = 0.0f;
     float radius = 5.0f;  // Радиус окружности, по которой будет двигаться камера
 
-    cam.rotatePosCameraAroundPoint(45, 0,  0);
+    // cam.rotatePosCameraAroundPoint(45, 0,  0);
 
     while (IsWindowOpen()) {
         ClearScreen(0, 100, 100);
 
-        // Обновляем углы вращения камеры
-        angleX += 0.9f; // Поворот по оси X (в градусах)
-        angleY += 0.9f; // Поворот по оси Y (в градусах)
+        // for (int i = 0; i < cube.getTrianglsCount(); i++) {
+        //     DrawWireframeTringle(DrawPixel,
+        //     cam.renderVertices(cube.getVertex(cube.getTriangls(i).n1)),
+        //     cam.renderVertices(cube.getVertex(cube.getTriangls(i).n2)),
+        //     cam.renderVertices(cube.getVertex(cube.getTriangls(i).n3)));
+        // }
 
-        // Вычисляем новую позицию камеры по углам
-        // float camX = radius * cos(angleY * (mge::M_PI / 180.0f)) * sin(angleX * (mge::M_PI / 180.0f));
-        // float camY = radius * cos(angleX * (mge::M_PI / 180.0f));
-        // float camZ = radius * sin(angleY * (mge::M_PI / 180.0f)) * sin(angleX * (mge::M_PI / 180.0f));
-
-        cam.rotateTargetCameraAroundPoint(angleX, angleY, 0, cam.pos);
-
-        // Обновляем позицию камеры
-        //cam.updateMatrix(mge::vec3<float>(camX, camY, camZ), mge::vec3<float>(0, 0, 0), mge::vec3<float>(0, 1, 0));
-
-        // Отрисовка куба
-        for (int i = 0; i < cube.getTrianglsCount(); i++) {
-            DrawWireframeTringle(DrawPixel,
-            cam.renderVertices(cube.getVertex(cube.getTriangls(i).n1)),
-            cam.renderVertices(cube.getVertex(cube.getTriangls(i).n2)),
-            cam.renderVertices(cube.getVertex(cube.getTriangls(i).n3)));
-        }
+        // https://dzen.ru/a/X_3LfJHirECVvNRK
+        mge::DrawFilledTringle(DrawPixel, mge::vec2<int>(-10, -10), mge::vec2<int>(10,10), mge::vec2<int>(10,-10));
 
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
