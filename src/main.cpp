@@ -621,21 +621,21 @@ namespace mge {
         };
         
         // конструктор по высоте, ширине и углу обзора
-        camera(float w, float h, float FOVy, vec3<float> pos = vec3<float>(0, 0, 0), vec3<float> target = vec3<float>(0, 0, -1), vec3<float> up = vec3<float>(0, -1, 0)) : aspect(w/h), FOVy(FOVy), pos(pos), target(target), up(up) {
+        camera(float w, float h, float FOVy, vec3<float> pos = vec3<float>(0, 0, 0), vec3<float> target = vec3<float>(0, 0, -1), vec3<float> up = vec3<float>(0, 1, 0)) : aspect(w/h), FOVy(FOVy), pos(pos), target(target), up(up) {
             updateVectors();
         };
 
         // конструктор по высоте, ширинеи буверам z
-        camera(float w, float h, float zNear, float zFar, vec3<float> pos = vec3<float>(0, 0, 0), vec3<float> target = vec3<float>(0, 0, -1), vec3<float> up = vec3<float>(0, -1, 0)) : aspect(w/h), zNear(zNear), zFar(zFar), pos(pos), target(target), up(up) {
+        camera(float w, float h, float zNear, float zFar, vec3<float> pos = vec3<float>(0, 0, 0), vec3<float> target = vec3<float>(0, 0, -1), vec3<float> up = vec3<float>(0, 1, 0)) : aspect(w/h), zNear(zNear), zFar(zFar), pos(pos), target(target), up(up) {
             updateVectors();
         };
 
         // конструктор по высоте, ширине, полю зрения и z буферам
-        camera(float w, float h, float FOVy, float zNear, float zFar, vec3<float> pos = vec3<float>(0, 0, 0), vec3<float> target = vec3<float>(0, 0,0), vec3<float> up = vec3<float>(0, -1, 0)) : aspect(w/h), FOVy(FOVy), zNear(zNear), zFar(zFar), pos(pos), target(target), up(up) {
+        camera(float w, float h, float FOVy, float zNear, float zFar, vec3<float> pos = vec3<float>(0, 0, 0), vec3<float> target = vec3<float>(0, 0,0), vec3<float> up = vec3<float>(0, 1, 0)) : aspect(w/h), FOVy(FOVy), zNear(zNear), zFar(zFar), pos(pos), target(target), up(up) {
             updateVectors();
         };
 
-        void updateMatrix(vec3<float> pos = vec3<float>(0, 0, 0), vec3<float> target = vec3<float>(0, 0, -1), vec3<float> up = vec3<float>(0, -1, 0)) {
+        void updateMatrix(vec3<float> pos = vec3<float>(0, 0, 0), vec3<float> target = vec3<float>(0, 0, -1), vec3<float> up = vec3<float>(0, 1, 0)) {
             this->pos = pos;
             this->target = target;
             this->up = up;
@@ -654,7 +654,42 @@ namespace mge {
             (int)(v.x / v.w),
             (int)(v.y / v.w));
         };
-                // поворот позиции не изменяя напровление 
+
+        // рендер линиями
+        void WireRenderModel(void (*PutPixel)(int x, int y, int r, int g, int b), Model model){
+            for (int i = 0; i < model.getTrianglsCount(); i++) {
+            mge::DrawWireframeTringle(DrawPixel,
+                renderVertices(model.getVertex(model.getTriangls(i).n1)),
+                renderVertices(model.getVertex(model.getTriangls(i).n2)),
+                renderVertices(model.getVertex(model.getTriangls(i).n3)), model.getTriangls(i).r, model.getTriangls(i).g, model.getTriangls(i).b);
+        }
+        }
+
+        // рендер с линиями и цветом
+        void FilledWireRenderModel(void (*PutPixel)(int x, int y, int r, int g, int b), Model model){
+            for (int i = 0; i < model.getTrianglsCount(); i++) {
+            mge::DrawFilledTriangle(DrawPixel,
+                renderVertices(model.getVertex(model.getTriangls(i).n1)),
+                renderVertices(model.getVertex(model.getTriangls(i).n2)),
+                renderVertices(model.getVertex(model.getTriangls(i).n3)), model.getTriangls(i).r, model.getTriangls(i).g, model.getTriangls(i).b);
+            mge::DrawWireframeTringle(DrawPixel,
+                renderVertices(model.getVertex(model.getTriangls(i).n1)),
+                renderVertices(model.getVertex(model.getTriangls(i).n2)),
+                renderVertices(model.getVertex(model.getTriangls(i).n3)), model.getTriangls(i).r, model.getTriangls(i).g, model.getTriangls(i).b);
+        }
+        }
+
+        //рендер цветной
+        void RenderModel(void (*PutPixel)(int x, int y, int r, int g, int b), Model model){
+            for (int i = 0; i < model.getTrianglsCount(); i++) {
+            mge::DrawFilledTriangle(DrawPixel,
+                renderVertices(model.getVertex(model.getTriangls(i).n1)),
+                renderVertices(model.getVertex(model.getTriangls(i).n2)),
+                renderVertices(model.getVertex(model.getTriangls(i).n3)), model.getTriangls(i).r, model.getTriangls(i).g, model.getTriangls(i).b);;
+            }
+        }
+
+        // поворот позиции не изменяя напровление 
         void rotatePosCameraAroundPoint(float ax_deg, float ay_deg, float az_deg, vec3<float> rotationPoint = vec3<float>(0, 0, 0)) {
             // Преобразование углов из градусов в радианы
             float ax = ax_deg * (M_PI / 180.0f);
@@ -712,6 +747,10 @@ namespace mge {
             pos = pos + v;
         }
 
+        //relative to direction
+        void moveRelativeToDirection(vec3<float> v){
+            move( v + target.normalize() );
+        }
     };
 }
 
@@ -732,16 +771,16 @@ int main() {
 
     // Треугольники для построения куба
     mge::Triangles<int> triangles[12] = {
-        mge::Triangles<int>{0, 1, 2}, // Передняя грань 0
-        mge::Triangles<int>{0, 2, 3}, // Передняя грань 1
-        mge::Triangles<int>{4, 5, 6}, // Задняя грань 0
-        mge::Triangles<int>{4, 6, 7}, // Задняя грань 1
-        mge::Triangles<int>{1, 5, 6}, // Левый грань 0
-        mge::Triangles<int>{1, 6, 2}, // Левый грань 1
-        mge::Triangles<int>{0, 4, 7}, // Правый грань 0
-        mge::Triangles<int>{0, 7, 3}, // Правый грань 1
-        mge::Triangles<int>{4, 5, 1}, // Верхний грань 0
-        mge::Triangles<int>{4, 1, 0}, // Верхний грань 1
+        mge::Triangles<int>{0, 1, 2, 50}, // Передняя грань 0
+        mge::Triangles<int>{0, 2, 3, 50}, // Передняя грань 1
+        mge::Triangles<int>{4, 5, 6, 50}, // Задняя грань 0
+        mge::Triangles<int>{4, 6, 7, 50}, // Задняя грань 1
+        mge::Triangles<int>{1, 5, 6, 50}, // Левый грань 0
+        mge::Triangles<int>{1, 6, 2, 50}, // Левый грань 1
+        mge::Triangles<int>{0, 4, 7, 50}, // Правый грань 0
+        mge::Triangles<int>{0, 7, 3, 50}, // Правый грань 1
+        mge::Triangles<int>{4, 5, 1, 50}, // Верхний грань 0
+        mge::Triangles<int>{4, 1, 0, 50}, // Верхний грань 1
         mge::Triangles<int>{2, 6, 7}, // Нижний грань 0
         mge::Triangles<int>{2, 7, 3}  // Нижний грань 1
     };
@@ -750,7 +789,7 @@ int main() {
     cube.move(mge::vec3<float>(0, 0, 0));
 
     // Инициализация камеры
-    mge::camera cam(800, 600, 10.0f * (mge::M_PI / 180.0f), 0.1f, 1000.0f, mge::vec3<float>(0, 0, -5), mge::vec3<float>(0, 0, 0));
+    mge::camera cam(800, 600, 10.0f * (mge::M_PI / 180.0f), 0.1f, 1000.0f, mge::vec3<float>(0, 0, -5), mge::vec3<float>(0, 0, 0), mge::vec3<float>(0,-1,0));
 
     // Переменные для углов вращения камеры
     float i = 0.0f;
@@ -758,22 +797,25 @@ int main() {
     while (IsWindowOpen()) {
         ClearScreen(0, 100, 100);
 
-        for (int i = 0; i < cube.getTrianglsCount(); i++) {
-            mge::DrawFilledTriangle(DrawPixel,
-                cam.renderVertices(cube.getVertex(cube.getTriangls(i).n1)),
-                cam.renderVertices(cube.getVertex(cube.getTriangls(i).n2)),
-                cam.renderVertices(cube.getVertex(cube.getTriangls(i).n3)), 0, 233, 0);
-            mge::DrawWireframeTringle(DrawPixel,
-                cam.renderVertices(cube.getVertex(cube.getTriangls(i).n1)),
-                cam.renderVertices(cube.getVertex(cube.getTriangls(i).n2)),
-                cam.renderVertices(cube.getVertex(cube.getTriangls(i).n3)));
-        }
+        // for (int i = 0; i < cube.getTrianglsCount(); i++) {
+        //     mge::DrawFilledTriangle(DrawPixel,
+        //         cam.renderVertices(cube.getVertex(cube.getTriangls(i).n1)),
+        //         cam.renderVertices(cube.getVertex(cube.getTriangls(i).n2)),
+        //         cam.renderVertices(cube.getVertex(cube.getTriangls(i).n3)), 0, 233, 0);
+        //     mge::DrawWireframeTringle(DrawPixel,
+        //         cam.renderVertices(cube.getVertex(cube.getTriangls(i).n1)),
+        //         cam.renderVertices(cube.getVertex(cube.getTriangls(i).n2)),
+        //         cam.renderVertices(cube.getVertex(cube.getTriangls(i).n3)));
+        // }
 
-        cam.updateTargetMatrix(mge::vec3<float>(-1 * (float)GetMousePosXScreenToClient() / 80, (float)GetMousePosYScreenToClient() / 60,0));
-        // mge::DrawFilledTriangle(DrawPixel, P0, P1, P2, 0, 233, 0); // Рисует красный треугольник
+        cam.RenderModel(DrawPixel, cube);
 
-        std::cout << GetMousePosXScreenToClient() << "\n";
-        //std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        //cam.updateTargetMatrix(mge::vec3<float>((float)GetMousePosXScreenToClient() / 80, (float)GetMousePosYScreenToClient() / -60, 0));
+        if (GetStateKey(65)) cam.move(mge::vec3<float>(-0.11 + cam.target.normalize().x, 0, 0) ); // a
+        if (GetStateKey(68)) cam.move(mge::vec3<float>(0.11 + cam.target.normalize().x, 0, 0) ); // d 
+        if (GetStateKey(87)) cam.move(mge::vec3<float>(0, 0, 0.11 + cam.target.normalize().z) ); // w 
+        if (GetStateKey(83)) cam.move(mge::vec3<float>(0, 0, -0.11 + cam.target.normalize().z) ); // s 
+        std::this_thread::sleep_for(std::chrono::milliseconds(100) );
     }
 
     return 0; // Завершаем программу
