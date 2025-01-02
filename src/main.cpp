@@ -480,25 +480,30 @@ namespace mge {
         DrawLine(PutPixel, P1, P2, color_r, color_g, color_b);
         DrawLine(PutPixel, P2, P0, color_r, color_g, color_b);
 
+
     }
 
-    void triangle(void (*PutPixel)(int x, int y, int r, int g, int b), vec2<int> t0, vec2<int> t1, vec2<int> t2, int color_r = 0, int color_g = 0, int color_b = 0) {
-        if (t0.y==t1.y && t0.y==t2.y) return; // i dont care about degenerate triangles
-        // sort the vertices, t0, t1, t2 lower-to-upper (bubblesort yay!)
-        if (t0.y>t1.y) std::swap(t0, t1);
-        if (t0.y>t2.y) std::swap(t0, t2);
-        if (t1.y>t2.y) std::swap(t1, t2);
-        int total_height = t2.y-t0.y;
-        for (int i=0; i<total_height; i++) {
-            bool second_half = i>t1.y-t0.y || t1.y==t0.y;
-            int segment_height = second_half ? t2.y-t1.y : t1.y-t0.y;
-            float alpha = (float)i/total_height;
-            float beta  = (float)(i-(second_half ? t1.y-t0.y : 0))/segment_height; // be careful: with above conditions no division by zero here
-            vec2<int> A =               t0 + (t2-t0)*alpha;
-            vec2<int> B = second_half ? t1 + (t2-t1)*beta : t0 + (t1-t0)*beta;
-            if (A.x>B.x) std::swap(A, B);
-            for (int j=A.x; j<=B.x; j++) {
-                PutPixel(j, t0.y+i, 0,0,0); // attention, due to int casts t0.y+i != A.y
+    bool IsInTriangle(vec2<int> a, vec2<int> b, vec2<int> c, vec2<int> p) {
+        // Вычисляем значения для каждой стороны треугольника
+        int d1 = (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x); // Относительно стороны AB
+        int d2 = (c.x - b.x) * (p.y - b.y) - (c.y - b.y) * (p.x - b.x); // Относительно стороны BC
+        int d3 = (a.x - c.x) * (p.y - c.y) - (a.y - c.y) * (p.x - c.x); // Относительно стороны CA
+
+        // Возвращаем результат в одной строке
+        return (d1 >= 0 && d2 >= 0 && d3 >= 0) || (d1 <= 0 && d2 <= 0 && d3 <= 0);
+    }
+
+    void DrawFilledTriangle(void (*PutPixel)(int x, int y, int r, int g, int b), vec2<int> P0, vec2<int> P1, vec2<int> P2, int color_r = 0, int color_g = 0, int color_b = 0) {
+        vec2<int> box_min(std::min<int>({ P0.x, P1.x, P2.x }), std::min<int>({ P0.y, P1.y, P2.y }));
+        vec2<int> box_max(std::max<int>({ P0.x, P1.x, P2.x }), std::max<int>({ P0.y, P1.y, P2.y }));
+
+        for (int y = box_min.y; y <= box_max.y; ++y) {
+            for (int x = box_min.x; x <= box_max.x; ++x) {
+                vec2<int> p = { x, y };
+                // Проверяем, находится ли пиксель внутри треугольника
+                if (IsInTriangle(P0, P1, P2, p)) {
+                    PutPixel(x, y, color_r, color_g, color_b); // Рисуем пиксель
+                }
             }
         }
     }
@@ -745,7 +750,7 @@ int main() {
     cube.move(mge::vec3<float>(0, 0, 0));
 
     // Инициализация камеры
-    // mge::camera cam(800, 600, 10.0f * (mge::M_PI / 180.0f), 0.1f, 1000.0f, mge::vec3<float>(0, 0, -5), mge::vec3<float>(0, 0, 0));
+    mge::camera cam(800, 600, 10.0f * (mge::M_PI / 180.0f), 0.1f, 1000.0f, mge::vec3<float>(0, 0, -5), mge::vec3<float>(0, 0, 0));
 
     // Переменные для углов вращения камеры
     float angleX = 0.0f;
@@ -757,21 +762,20 @@ int main() {
     while (IsWindowOpen()) {
         ClearScreen(0, 100, 100);
 
-        // for (int i = 0; i < cube.getTrianglsCount(); i++) {
-        //     DrawWireframeTringle(DrawPixel,
-        //     cam.renderVertices(cube.getVertex(cube.getTriangls(i).n1)),
-        //     cam.renderVertices(cube.getVertex(cube.getTriangls(i).n2)),
-        //     cam.renderVertices(cube.getVertex(cube.getTriangls(i).n3)));
-        // }
+         for (int i = 0; i < cube.getTrianglsCount(); i++) {
+             mge::DrawFilledTriangle(DrawPixel,
+                 cam.renderVertices(cube.getVertex(cube.getTriangls(i).n1)),
+                 cam.renderVertices(cube.getVertex(cube.getTriangls(i).n2)),
+                 cam.renderVertices(cube.getVertex(cube.getTriangls(i).n3)), 0, 233, 0);
+             mge::DrawWireframeTringle(DrawPixel,
+                 cam.renderVertices(cube.getVertex(cube.getTriangls(i).n1)),
+                 cam.renderVertices(cube.getVertex(cube.getTriangls(i).n2)),
+                 cam.renderVertices(cube.getVertex(cube.getTriangls(i).n3)));
+         }
 
-        // https://dzen.ru/a/X_3LfJHirECVvNRK
-        mge::vec2<int> P0(100, 100);
-        mge::vec2<int> P1(300, 100);
-        mge::vec2<int> P2(200, 400);
+        // mge::DrawFilledTriangle(DrawPixel, P0, P1, P2, 0, 233, 0); // Рисует красный треугольник
 
-        mge::triangle(DrawPixel, P0, P1, P2, 0, 0, 0); // Рисует красный треугольник
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
     return 0; // Завершаем программу
