@@ -482,39 +482,23 @@ namespace mge {
 
     }
 
-    void DrawFilledTriangle(void (*PutPixel)(int x, int y, int r, int g, int b), vec2<int> P0, vec2<int> P1, vec2<int> P2, int color_r = 0, int color_g = 0, int color_b = 0) {
-        // Сортировка точек так, что y0 <= y1 <= y2
-        if (P1.y < P0.y) std::swap(P1, P0);
-        if (P2.y < P0.y) std::swap(P2, P0);
-        if (P2.y < P1.y) std::swap(P2, P1);
-
-        // Вычисление координат x рёбер треугольника
-        int size01, size12, size02;
-        int* x01 = interpolated(P0.y, P0.x, P1.y, P1.x, size01);
-        int* x12 = interpolated(P1.y, P1.x, P2.y, P2.x, size12);
-        int* x02 = interpolated(P0.y, P0.x, P2.y, P2.x, size02);
-
-        removeLastElement(x01, size01);
-
-        int size012 = size01 - 1  + size12;
-        int* x012 = combineArray(x12, x01, size12, size12);
-
-        // Определяем, какая из сторон левая и правая
-        int* x_left;
-        int* x_right;
-
-        int m = size012 / 2;
-        if(x02[m] < x012[m]){
-            x_left = x02;
-            x_right = x012;
-        } else {
-            x_left = x012;
-            x_right = x02;
-        }
-
-        for (int y = P0.y; y <= P2.y; y++) {
-            for(int x = x_left[y -  P0.y]; x <= x_right[y - P0.y]; x++){
-                PutPixel(x, y, color_r, color_g, color_b);
+    void triangle(void (*PutPixel)(int x, int y, int r, int g, int b), vec2<int> t0, vec2<int> t1, vec2<int> t2, int color_r = 0, int color_g = 0, int color_b = 0) {
+        if (t0.y==t1.y && t0.y==t2.y) return; // i dont care about degenerate triangles
+        // sort the vertices, t0, t1, t2 lower-to-upper (bubblesort yay!)
+        if (t0.y>t1.y) std::swap(t0, t1);
+        if (t0.y>t2.y) std::swap(t0, t2);
+        if (t1.y>t2.y) std::swap(t1, t2);
+        int total_height = t2.y-t0.y;
+        for (int i=0; i<total_height; i++) {
+            bool second_half = i>t1.y-t0.y || t1.y==t0.y;
+            int segment_height = second_half ? t2.y-t1.y : t1.y-t0.y;
+            float alpha = (float)i/total_height;
+            float beta  = (float)(i-(second_half ? t1.y-t0.y : 0))/segment_height; // be careful: with above conditions no division by zero here
+            vec2<int> A =               t0 + (t2-t0)*alpha;
+            vec2<int> B = second_half ? t1 + (t2-t1)*beta : t0 + (t1-t0)*beta;
+            if (A.x>B.x) std::swap(A, B);
+            for (int j=A.x; j<=B.x; j++) {
+                PutPixel(j, t0.y+i, 0,0,0); // attention, due to int casts t0.y+i != A.y
             }
         }
     }
@@ -783,9 +767,9 @@ int main() {
         // https://dzen.ru/a/X_3LfJHirECVvNRK
         mge::vec2<int> P0(100, 100);
         mge::vec2<int> P1(300, 100);
-        mge::vec2<int> P2(200, 10);
+        mge::vec2<int> P2(200, 400);
 
-        mge::DrawFilledTriangle(DrawPixel, P0, P1, P2, 0, 0, 0); // Рисует красный треугольник
+        mge::triangle(DrawPixel, P0, P1, P2, 0, 0, 0); // Рисует красный треугольник
 
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
