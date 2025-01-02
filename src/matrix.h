@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cmath>
 
 // Матрица для вращения по X

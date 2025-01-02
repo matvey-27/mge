@@ -1,4 +1,5 @@
 #pragma once
+
 #include <cstddef>
 #include <iostream>
 
@@ -7,7 +8,7 @@ namespace mge {
 
     // Реализация шаблонной функции addElement с int как размер
     template <typename T>
-    void addElement(T*& arr, int& size, T newElement) {
+    void addElement(T* &arr, int &size, T newElement) {
         // Создаем новый массив с увеличенной вместимостью
         T* newArr = new T[size + 1];
 
@@ -29,7 +30,7 @@ namespace mge {
 
     // Реализация шаблонной функции addElement с size_t как размер
     template <typename T>
-    void addElement(T*& arr, size_t& size, T newElement) {
+    void addElement(T* &arr, size_t& size, T newElement) {
         // Создаем новый массив с увеличенной вместимостью
         T* newArr = new T[size + 1];
 
