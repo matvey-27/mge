@@ -14,13 +14,94 @@
 // тест vec2 (если все работает -> движок *("MGE/math/vec2")* )
 namespace mge {
     template <typename T>
-    class vec2{
+    class vec2 {
     public:
-        T x, y, w = 0;
-        
-        vec2() : x(0), y(0) {};
-        vec2(T x, T y, T w = 1) : x(x), y(y), w(w) {};
+        T x, y, w;
+
+        // Конструкторы
+        vec2() : x(0), y(0), w(1) {}
+        vec2(T x, T y, T w = 1) : x(x), y(y), w(w) {}
         ~vec2() = default;
+
+        // Оператор сравнения на равенство
+        bool operator==(const vec2& other) const {
+            return x == other.x && y == other.y && w == other.w;
+        }
+
+        // Оператор неравенства
+        bool operator!=(const vec2& other) const {
+            return !(*this == other);
+        }
+
+        // Оператор сложения
+        vec2 operator+(const vec2& other) const {
+            return vec2(x + other.x, y + other.y, w + other.w);
+        }
+
+        // Оператор вычитания
+        vec2 operator-(const vec2& other) const {
+            return vec2(x - other.x, y - other.y, w - other.w);
+        }
+
+        // Оператор умножения (поэлементное умножение)
+        vec2 operator*(const vec2& other) const {
+            return vec2(x * other.x, y * other.y, w * other.w);
+        }
+
+        // Оператор деления (поэлементное деление)
+        vec2 operator/(const vec2& other) const {
+            return vec2(x / other.x, y / other.y, w / other.w);
+        }
+
+        // Оператор умножения на скаляр
+        vec2 operator*(T scalar) const {
+            return vec2(x * scalar, y * scalar, w * scalar);
+        }
+
+        // Оператор деления на скаляр
+        vec2 operator/(T scalar) const {
+            return vec2(x / scalar, y / scalar, w / scalar);
+        }
+
+        // Оператор присваивания
+        vec2& operator=(const vec2& other) {
+            if (this != &other) {
+                x = other.x;
+                y = other.y;
+                w = other.w;
+            }
+            return *this;
+        }
+
+        // Оператор присваивания с добавлением
+        vec2& operator+=(const vec2& other) {
+            x += other.x;
+            y += other.y;
+            w += other.w;
+            return *this;
+        }
+
+        // Оператор присваивания с вычитанием
+        vec2& operator-=(const vec2& other) {
+            x -= other.x;
+            y -= other.y;
+            w -= other.w;
+            return *this;
+        }
+
+        // Индексатор для доступа к элементам (по индексу)
+        T& operator[](size_t index) {
+            if (index == 0) return x;
+            if (index == 1) return y;
+            return w; // Для индекса 2 вернем w
+        }
+
+        // Константный индексатор
+        const T& operator[](size_t index) const {
+            if (index == 0) return x;
+            if (index == 1) return y;
+            return w;
+        }
     };
 
     template <typename T>
@@ -330,27 +411,34 @@ namespace mge {
 // тест функций отрисовки без rgbcolor (если все работает -> движок)
 namespace mge {
     int* interpolated(int i0, int d0, int i1, int d1, int& size) {
-        size = abs(i1 - i0) + 1; // Количество интерполированных значений
-        int* values = new int[size]; // Создаем массив нужного размера
-
-        // Проверка на успешное выделение памяти
-        if (!values) {
-            return nullptr;
-        }
-
-        // Проверяем, если i0 равно i1
+        // Проверка на то, что i0 и i1 разные
         if (i0 == i1) {
-            values[0] = d0; // Добавляем d0 в массив
+            size = 1;
+            int* values = new int[size];
+            values[0] = d0;  // Если индексы одинаковые, возвращаем одно значение
+            return values;
         }
-        else {
-            int delta = d1 - d0;
-            for (int i = 0; i < size; ++i) {
-                values[i] = d0 + (delta * i) / (i1 - i0); // Линейная интерполяция
-            }
+
+        size = abs(i1 - i0) + 1;  // Количество интерполированных значений
+        if (size <= 0) {
+            return nullptr;  // Невозможно интерполировать, если размер 0 или меньше
+        }
+
+        int* values = new int[size]; // Выделяем память для массива
+
+        if (!values) {
+            return nullptr; // Ошибка выделения памяти
+        }
+
+        // Если i0 не равно i1, выполняем интерполяцию
+        int delta = d1 - d0;
+        for (int i = 0; i < size; ++i) {
+            values[i] = d0 + (delta * i + (i1 - i0) / 2) / (i1 - i0); // Линейная интерполяция с округлением
         }
 
         return values; // Возвращаем массив
     }
+
     void DrawLine(void (*PutPixel)(int x, int y, int r, int g, int b), vec2<int> P0, vec2<int> P1, int color_r, int color_g, int color_b) {
         int dx = P1.x - P0.x;
         int dy = P1.y - P0.y;
@@ -387,79 +475,49 @@ namespace mge {
         }
     }
 
-    void DrawWireframeTringle(void (*PutPixel)(int x, int y, int r, int g, int b), vec2<int> P0, vec2<int> P1, vec2<int> P2, int color_r = 0, int color_g = 0, int color_b = 0)
-    {
+    void DrawWireframeTringle(void (*PutPixel)(int x, int y, int r, int g, int b), vec2<int> P0, vec2<int> P1, vec2<int> P2, int color_r = 0, int color_g = 0, int color_b = 0){
         DrawLine(PutPixel, P0, P1, color_r, color_g, color_b);
         DrawLine(PutPixel, P1, P2, color_r, color_g, color_b);
         DrawLine(PutPixel, P2, P0, color_r, color_g, color_b);
 
     }
 
-    // Функция для рисования заполненного треугольника
-    void DrawFilledTringle(void (*PutPixel)(int x, int y, int r, int g, int b), vec2<int> P0, vec2<int> P1, vec2<int> P2, int color_r = 0, int color_g = 0, int color_b = 0) {
-    // Сортировка вершин по оси Y (от верхней к нижней)
-    if (P1.y < P0.y) { std::swap(P1, P0); }
-    if (P2.y < P0.y) { std::swap(P2, P0); }
-    if (P2.y < P1.y) { std::swap(P2, P1); }
+    void DrawFilledTriangle(void (*PutPixel)(int x, int y, int r, int g, int b), vec2<int> P0, vec2<int> P1, vec2<int> P2, int color_r = 0, int color_g = 0, int color_b = 0) {
+        // Сортировка точек так, что y0 <= y1 <= y2
+        if (P1.y < P0.y) std::swap(P1, P0);
+        if (P2.y < P0.y) std::swap(P2, P0);
+        if (P2.y < P1.y) std::swap(P2, P1);
 
-    // Интерполяция координат X для каждого ребра треугольника
-    int size01;
-    int* x01 = interpolated(P0.y, P0.x, P1.y, P1.x, size01);
-    int size12;
-    int* x12 = interpolated(P1.y, P1.x, P2.y, P2.x, size12);
-    int size02;
-    int* x02 = interpolated(P0.y, P0.x, P2.y, P2.x, size02);
+        // Вычисление координат x рёбер треугольника
+        int size01, size12, size02;
+        int* x01 = interpolated(P0.y, P0.x, P1.y, P1.x, size01);
+        int* x12 = interpolated(P1.y, P1.x, P2.y, P2.x, size12);
+        int* x02 = interpolated(P0.y, P0.x, P2.y, P2.x, size02);
 
-    // Проверка на ошибки в интерполяции
-    if (x01 == nullptr || x12 == nullptr || x02 == nullptr) {
-        return;
-    }
+        removeLastElement(x01, size01);
 
-    // Разделение треугольника на левую и правую часть
-    int m = size12 / 2;
-    int* x_left;
-    int* x_right;
+        int size012 = size01 - 1  + size12;
+        int* x012 = combineArray(x12, x01, size12, size12);
 
-    if (x02[m] < x12[m]) {
-        x_left = x02;
-        x_right = x12;
-    } else {
-        x_left = x12;
-        x_right = x02;
-    }
+        // Определяем, какая из сторон левая и правая
+        int* x_left;
+        int* x_right;
 
-    // Заполнение треугольника пикселями
-    for (int y = P0.y; y <= P2.y; y++) {
-        // Убедимся, что индексы находятся в допустимом диапазоне
-        if (y - P0.y >= size01 || y - P1.y >= size12 || y - P0.y >= size02) {
-            break;
+        int m = size012 / 2;
+        if(x02[m] < x012[m]){
+            x_left = x02;
+            x_right = x012;
+        } else {
+            x_left = x012;
+            x_right = x02;
         }
 
-        int left_x = x_left[y - P0.y];
-        int right_x = x_right[y - P0.y];
-
-        // Если координаты выходят за пределы, их можно ограничить до макс и мин значений
-        if (left_x > right_x) {
-            std::swap(left_x, right_x);
-        }
-
-        // Рисуем пиксели на текущем уровне Y
-        for (int x = left_x; x <= right_x; x++) {
-            PutPixel(x, y, color_r, color_g, color_b);
+        for (int y = P0.y; y <= P2.y; y++) {
+            for(int x = x_left[y -  P0.y]; x <= x_right[y - P0.y]; x++){
+                PutPixel(x, y, color_r, color_g, color_b);
+            }
         }
     }
-
-    // Освобождение памяти
-    delete[] x01;
-    delete[] x02;
-    delete[] x12;
-    delete[] x_left;
-    delete[] x_right;
-}
-
-
-
-
 
     void DrawCircle(void (*PutPixel)(int x, int y, int r, int g, int b), int centerX, int centerY, int radius, int color_r, int color_g, int color_b) {
         for (int angle = 0; angle < 360; angle++) {
@@ -723,7 +781,11 @@ int main() {
         // }
 
         // https://dzen.ru/a/X_3LfJHirECVvNRK
-        mge::DrawFilledTringle(DrawPixel, mge::vec2<int>(-10, -10), mge::vec2<int>(10,10), mge::vec2<int>(10,-10));
+        mge::vec2<int> P0(100, 100);
+        mge::vec2<int> P1(300, 100);
+        mge::vec2<int> P2(200, 10);
+
+        mge::DrawFilledTriangle(DrawPixel, P0, P1, P2, 0, 0, 0); // Рисует красный треугольник
 
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
