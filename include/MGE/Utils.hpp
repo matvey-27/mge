@@ -4,7 +4,7 @@
 #include <iostream>
 
 namespace mge {
-    const float M_PI = 3.1415f;
+    const float M_PI = 3.1415926535f;
 
     // Реализация шаблонной функции addElement с int как размер
     template <typename T>

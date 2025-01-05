@@ -49,7 +49,7 @@ int main() {
     cube.move(mge::vec3<float>(0, 0, 0));
 
     // Инициализация камеры
-    mge::camera cam(800, 600, 10.0f * (mge::M_PI / 180.0f), 0.1f, 1000.0f, mge::vec3<float>(0, 0, -5), mge::vec3<float>(0, 0, 0), mge::vec3<float>(0, -1, 0));
+    mge::camera cam(800, 600, 60.0f, 0.1f, 1000.0f, mge::vec3<float>(0, 0, -5), mge::vec3<float>(0, 0, 0), mge::vec3<float>(0, -1, 0));
 
     // Переменные для углов вращения камеры
     float i = 0.0f;

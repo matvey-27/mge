@@ -57,8 +57,8 @@ namespace mge {
             this->view_matrix = mat4x4<float>(view_matrix);
 
             float projection_matrix[4][4] = {
-                { 1 / (aspect * std::tan(FOVy / 2)), 0, 0, 0 },
-                { 0, 1 / std::tan(FOVy / 2), 0, 0 },
+                { 1 / (aspect * std::tan(FOVy * (mge::M_PI / 360.0f) / 2)), 0, 0, 0 },
+                { 0, 1 / std::tan(FOVy * (mge::M_PI / 360.0f) / 2), 0, 0 },
                 { 0, 0, -1 * (zFar + zNear) / (zFar - zNear), -1},
                 { 0, 0, -1 * (2 * zFar * zNear) / (zFar - zNear), 0}
             };
