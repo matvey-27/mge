@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cmath>
+
 #include "vec2.h"
 
 namespace mge {
@@ -48,7 +50,8 @@ namespace mge {
         vec3<T> normalize() const {
             T len = length();
             if (len == 0) {
-                throw std::runtime_error("Cannot normalize a zero-length vector");
+                //throw std::runtime_error("Cannot normalize a zero-length vector");
+                return *this;
             }
             return vec3<T>(this->x / len, this->y / len, this->z / len);
         }

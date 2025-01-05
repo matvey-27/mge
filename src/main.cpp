@@ -1,17 +1,17 @@
 #include "../include/GraphicsLibrarry/libs.h"
-#include "../include/MGE/Utils.hpp"
+// #include "../include/MGE/Utils.hpp"
 
-#include "../include/MGE/math/vec2.h"
+// #include "../include/MGE/math/vec2.h"
 #include "../include/MGE/math/vec3.h"
 #include "../include/MGE/math/tringles.hpp"
 
-#include "../include/MGE/render/drawFun.h"
+// #include "../include/MGE/render/drawFun.h"
 #include "../include/MGE/render/model.h"
 #include "../include/MGE/render/camera.h"
 
-#include <stdexcept>
+// #include <stdexcept>
 #include <thread>
-#include <cmath>
+// #include <cmath>
 
 
 int main() {

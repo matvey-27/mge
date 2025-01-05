@@ -10,7 +10,8 @@ set(GRAPHICS_LIBRARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs/GraphicsLibrarry")  #
 set(GRAPHICS_LIBRARY "${GRAPHICS_LIBRARY_DIR}/GraphicsLibrary.lib")	
 
 #Создайте исполняемый файл
-add_executable(game_engine src/main.cpp "include/MGE/math/vec2.h" "include/MGE/math/vec3.h" "include/MGE/math/mat4x4.h" "include/MGE/render/model.h" "include/MGE/render/drawFun.h" "include/MGE/render/renderFun.h" "include/MGE/render/camera.h")
+add_executable(game_engine libs/MGE/render/model.cpp
+                            src/main.cpp )
 
 #Линковка к библиотеке .lib
 target_link_libraries(game_engine PRIVATE ${GRAPHICS_LIBRARY})
