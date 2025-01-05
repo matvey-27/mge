@@ -12,39 +12,39 @@ namespace mge {
         vec3(T x, T y, T z, T w = 1) : vec2<T>::vec2(x, y, w), z(z) {};
         ~vec3() = default;
 
-        // оператор +=
+        // РѕРїРµСЂР°С‚РѕСЂ +=
         vec3<T>& operator+=(const vec3<T>& v) {
             this->x += v.x;
             this->y += v.y;
             this->z += v.z;
-            return *this; // Возвращаем this
+            return *this; // Р’РѕР·РІСЂР°С‰Р°РµРј this
         }
 
-        // оператор -
+        // РѕРїРµСЂР°С‚РѕСЂ -
         vec3<T> operator-(vec3<T> p) {
             return vec3<T>(this->x - p.x, this->y - p.y, this->z - p.z);
         }
 
-        // Оператор +  
+        // РћРїРµСЂР°С‚РѕСЂ +  
         vec3<T> operator+(vec3<T> p) {
             return vec3<T>(this->x + p.x, this->y + p.y, this->z + p.z);
         }
 
-        // Оператор * умнажение векторов (cross)
+        // РћРїРµСЂР°С‚РѕСЂ * СѓРјРЅР°Р¶РµРЅРёРµ РІРµРєС‚РѕСЂРѕРІ (cross)
         vec3<T> operator*(const vec3<T>& other) const {
             return vec3<T>(
-                this->y * other.z - this->z * other.y,  // Компонента x
-                this->z * other.x - this->x * other.z,  // Компонента y
-                this->x * other.y - this->y * other.x   // Компонента z
+                this->y * other.z - this->z * other.y,  // РљРѕРјРїРѕРЅРµРЅС‚Р° x
+                this->z * other.x - this->x * other.z,  // РљРѕРјРїРѕРЅРµРЅС‚Р° y
+                this->x * other.y - this->y * other.x   // РљРѕРјРїРѕРЅРµРЅС‚Р° z
             );
         }
 
-        // длина вектора
+        // РґР»РёРЅР° РІРµРєС‚РѕСЂР°
         T length() const {
             return std::sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
         }
 
-        // Метод для нормализации вектора
+        // РњРµС‚РѕРґ РґР»СЏ РЅРѕСЂРјР°Р»РёР·Р°С†РёРё РІРµРєС‚РѕСЂР°
         vec3<T> normalize() const {
             T len = length();
             if (len == 0) {

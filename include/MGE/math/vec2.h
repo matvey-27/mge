@@ -6,22 +6,22 @@ namespace mge {
     public:
         T x, y, w;
 
-        // Конструкторы
+        // РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂС‹
         vec2() : x(0), y(0), w(1) {}
         vec2(T x, T y, T w = 1) : x(x), y(y), w(w) {}
         ~vec2() = default;
 
-        // Оператор сравнения на равенство
+        // РћРїРµСЂР°С‚РѕСЂ СЃСЂР°РІРЅРµРЅРёСЏ РЅР° СЂР°РІРµРЅСЃС‚РІРѕ
         bool operator==(const vec2& other) const {
             return x == other.x && y == other.y && w == other.w;
         }
 
-        // Оператор неравенства
+        // РћРїРµСЂР°С‚РѕСЂ РЅРµСЂР°РІРµРЅСЃС‚РІР°
         bool operator!=(const vec2& other) const {
             return !(*this == other);
         }
 
-        // Оператор сложения
+        // РћРїРµСЂР°С‚РѕСЂ СЃР»РѕР¶РµРЅРёСЏ
         vec2 operator+(const vec2& other) const {
             return vec2(x + other.x, y + other.y, w + other.w);
         }
@@ -31,32 +31,32 @@ namespace mge {
         }
 
 
-        // Оператор вычитания
+        // РћРїРµСЂР°С‚РѕСЂ РІС‹С‡РёС‚Р°РЅРёСЏ
         vec2 operator-(const vec2& other) const {
             return vec2(x - other.x, y - other.y, w - other.w);
         }
 
-        // Оператор умножения (поэлементное умножение)
+        // РћРїРµСЂР°С‚РѕСЂ СѓРјРЅРѕР¶РµРЅРёСЏ (РїРѕСЌР»РµРјРµРЅС‚РЅРѕРµ СѓРјРЅРѕР¶РµРЅРёРµ)
         vec2 operator*(const vec2& other) const {
             return vec2(x * other.x, y * other.y, w * other.w);
         }
 
-        // Оператор деления (поэлементное деление)
+        // РћРїРµСЂР°С‚РѕСЂ РґРµР»РµРЅРёСЏ (РїРѕСЌР»РµРјРµРЅС‚РЅРѕРµ РґРµР»РµРЅРёРµ)
         vec2 operator/(const vec2& other) const {
             return vec2(x / other.x, y / other.y, w / other.w);
         }
 
-        // Оператор умножения на скаляр
+        // РћРїРµСЂР°С‚РѕСЂ СѓРјРЅРѕР¶РµРЅРёСЏ РЅР° СЃРєР°Р»СЏСЂ
         vec2 operator*(T scalar) const {
             return vec2(x * scalar, y * scalar, w * scalar);
         }
 
-        // Оператор деления на скаляр
+        // РћРїРµСЂР°С‚РѕСЂ РґРµР»РµРЅРёСЏ РЅР° СЃРєР°Р»СЏСЂ
         vec2 operator/(T scalar) const {
             return vec2(x / scalar, y / scalar, w / scalar);
         }
 
-        // Оператор присваивания
+        // РћРїРµСЂР°С‚РѕСЂ РїСЂРёСЃРІР°РёРІР°РЅРёСЏ
         vec2& operator=(const vec2& other) {
             if (this != &other) {
                 x = other.x;
@@ -66,7 +66,7 @@ namespace mge {
             return *this;
         }
 
-        // Оператор присваивания с добавлением
+        // РћРїРµСЂР°С‚РѕСЂ РїСЂРёСЃРІР°РёРІР°РЅРёСЏ СЃ РґРѕР±Р°РІР»РµРЅРёРµРј
         vec2& operator+=(const vec2& other) {
             x += other.x;
             y += other.y;
@@ -74,7 +74,7 @@ namespace mge {
             return *this;
         }
 
-        // Оператор присваивания с вычитанием
+        // РћРїРµСЂР°С‚РѕСЂ РїСЂРёСЃРІР°РёРІР°РЅРёСЏ СЃ РІС‹С‡РёС‚Р°РЅРёРµРј
         vec2& operator-=(const vec2& other) {
             x -= other.x;
             y -= other.y;
@@ -82,14 +82,14 @@ namespace mge {
             return *this;
         }
 
-        // Индексатор для доступа к элементам (по индексу)
+        // РРЅРґРµРєСЃР°С‚РѕСЂ РґР»СЏ РґРѕСЃС‚СѓРїР° Рє СЌР»РµРјРµРЅС‚Р°Рј (РїРѕ РёРЅРґРµРєСЃСѓ)
         T& operator[](size_t index) {
             if (index == 0) return x;
             if (index == 1) return y;
-            return w; // Для индекса 2 вернем w
+            return w; // Р”Р»СЏ РёРЅРґРµРєСЃР° 2 РІРµСЂРЅРµРј w
         }
 
-        // Константный индексатор
+        // РљРѕРЅСЃС‚Р°РЅС‚РЅС‹Р№ РёРЅРґРµРєСЃР°С‚РѕСЂ
         const T& operator[](size_t index) const {
             if (index == 0) return x;
             if (index == 1) return y;

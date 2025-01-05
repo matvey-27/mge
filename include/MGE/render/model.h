@@ -12,12 +12,12 @@
 namespace mge {
     class Model {
     private:
-        vec3<float> global_position = vec3<float>(0, 0, 0); // глобальная позиция позиция
+        vec3<float> global_position = vec3<float>(0, 0, 0); // РіР»РѕР±Р°Р»СЊРЅР°СЏ РїРѕР·РёС†РёСЏ РїРѕР·РёС†РёСЏ
 
         vec3<float>* vertices;
-        size_t count_v; // Количество текущих вершин
+        size_t count_v; // РљРѕР»РёС‡РµСЃС‚РІРѕ С‚РµРєСѓС‰РёС… РІРµСЂС€РёРЅ
         Triangles<int>* triangles;
-        size_t count_t; // Количество текущих вершин
+        size_t count_t; // РљРѕР»РёС‡РµСЃС‚РІРѕ С‚РµРєСѓС‰РёС… РІРµСЂС€РёРЅ
     public:
         Model() : vertices(new vec3<float>[0]), count_v(0), triangles(new Triangles<int>[0]), count_t(0) {};
 
@@ -29,28 +29,28 @@ namespace mge {
 
         Model& operator=(const Model& other);
 
-        // Метод для добавления новой вершины
+        // РњРµС‚РѕРґ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ РЅРѕРІРѕР№ РІРµСЂС€РёРЅС‹
         void addVertex(const vec3<float>& point);
 
-        // Метод для получения количества вершин
+        // РњРµС‚РѕРґ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РєРѕР»РёС‡РµСЃС‚РІР° РІРµСЂС€РёРЅ
         size_t getVertexCount() const;
 
-        // Метод для доступа к вершине
+        // РњРµС‚РѕРґ РґР»СЏ РґРѕСЃС‚СѓРїР° Рє РІРµСЂС€РёРЅРµ
         vec3<float>& getVertex(size_t index);
 
-        // Метод для добавления новой треугольников
+        // РњРµС‚РѕРґ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ РЅРѕРІРѕР№ С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРІ
         void addTriangls(const Triangles<int>& point);
 
-        // Метод для получения количества треугольников
+        // РњРµС‚РѕРґ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РєРѕР»РёС‡РµСЃС‚РІР° С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРІ
         size_t getTrianglsCount();
 
-        // Метод для доступа к треугольников
+        // РњРµС‚РѕРґ РґР»СЏ РґРѕСЃС‚СѓРїР° Рє С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРІ
         Triangles<int>& getTriangls(size_t index);
 
-        // передвижение
+        // РїРµСЂРµРґРІРёР¶РµРЅРёРµ
         void move(vec3<float> v);
 
-        // -- вращение 
+        // -- РІСЂР°С‰РµРЅРёРµ 
         void rotate(float ax, float ay, float az);
     };
 
@@ -71,10 +71,10 @@ namespace mge {
     }
 
     Model::~Model() {
-        delete[] vertices; // Освобождение памяти
+        delete[] vertices; // РћСЃРІРѕР±РѕР¶РґРµРЅРёРµ РїР°РјСЏС‚Рё
         vertices = nullptr;
 
-        delete[] triangles; // Освобождение памяти
+        delete[] triangles; // РћСЃРІРѕР±РѕР¶РґРµРЅРёРµ РїР°РјСЏС‚Рё
         triangles = nullptr;
     }
 
@@ -112,17 +112,17 @@ namespace mge {
     }
 
 
-    // Метод для добавления новой вершины
+    // РњРµС‚РѕРґ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ РЅРѕРІРѕР№ РІРµСЂС€РёРЅС‹
     void Model::addVertex(const vec3<float>& point) {
         addElement(vertices, count_v, point);
     }
 
-    // Метод для получения количества вершин
+    // РњРµС‚РѕРґ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РєРѕР»РёС‡РµСЃС‚РІР° РІРµСЂС€РёРЅ
     size_t Model::getVertexCount() const {
         return count_v;
     }
 
-    // Метод для доступа к вершине
+    // РњРµС‚РѕРґ РґР»СЏ РґРѕСЃС‚СѓРїР° Рє РІРµСЂС€РёРЅРµ
     vec3<float>& Model::getVertex(size_t index) {
         if (index >= count_v) {
             throw std::out_of_range("Index out of range");
@@ -130,18 +130,18 @@ namespace mge {
         return vertices[index];
     }
 
-    // Метод для добавления новой треугольников
+    // РњРµС‚РѕРґ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ РЅРѕРІРѕР№ С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРІ
     void Model::addTriangls(const Triangles<int>& point) {
         addElement(triangles, count_t, point);
     }
 
-    // Метод для получения количества треугольников
+    // РњРµС‚РѕРґ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РєРѕР»РёС‡РµСЃС‚РІР° С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРІ
     size_t Model::getTrianglsCount()
     {
         return count_t;
     }
 
-    // Метод для доступа к треугольников
+    // РњРµС‚РѕРґ РґР»СЏ РґРѕСЃС‚СѓРїР° Рє С‚СЂРµСѓРіРѕР»СЊРЅРёРєРѕРІ
     Triangles<int>& Model::getTriangls(size_t index) {
         if (index >= count_t) {
             throw std::out_of_range("Index out of range");
@@ -149,7 +149,7 @@ namespace mge {
         return triangles[index];
     }
 
-    // Метод для перемещения 
+    // РњРµС‚РѕРґ РґР»СЏ РїРµСЂРµРјРµС‰РµРЅРёСЏ 
     void Model::move(vec3<float> v) {
         global_position += v;
 
@@ -158,14 +158,14 @@ namespace mge {
         }
     }
 
-    // Метод для вращения 
+    // РњРµС‚РѕРґ РґР»СЏ РІСЂР°С‰РµРЅРёСЏ 
     void Model::rotate(float ax_deg, float ay_deg, float az_deg) {
-        // Преобразование углов из градусов в радианы
+        // РџСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ СѓРіР»РѕРІ РёР· РіСЂР°РґСѓСЃРѕРІ РІ СЂР°РґРёР°РЅС‹
         float ax = ax_deg * (M_PI / 180.0f);
         float ay = ay_deg * (M_PI / 180.0f);
         float az = az_deg * (M_PI / 180.0f);
 
-        // Матрица для вращения по X
+        // РњР°С‚СЂРёС†Р° РґР»СЏ РІСЂР°С‰РµРЅРёСЏ РїРѕ X
         float rotationMatrixX[4][4] = {
             { 1,         0,          0, 0 },
             { 0, std::cos(ax), -std::sin(ax),  0 },
@@ -174,7 +174,7 @@ namespace mge {
         };
         mat4x4<float> rx(rotationMatrixX);
 
-        // Матрица для вращения по Y
+        // РњР°С‚СЂРёС†Р° РґР»СЏ РІСЂР°С‰РµРЅРёСЏ РїРѕ Y
         float rotationMatrixY[4][4] = {
             { std::cos(ay),  0, std::sin(ay), 0 },
             { 0,        1, 0,       0 },
@@ -183,7 +183,7 @@ namespace mge {
         };
         mat4x4<float> ry(rotationMatrixY);
 
-        // Матрица для вращения по Z
+        // РњР°С‚СЂРёС†Р° РґР»СЏ РІСЂР°С‰РµРЅРёСЏ РїРѕ Z
         float rotationMatrixZ[4][4] = {
             { std::cos(az), -std::sin(az), 0, 0 },
             { std::sin(az),  std::cos(az), 0, 0 },
@@ -192,9 +192,9 @@ namespace mge {
         };
         mat4x4<float> rz(rotationMatrixZ);
 
-        // Применение вращения к вершинам
+        // РџСЂРёРјРµРЅРµРЅРёРµ РІСЂР°С‰РµРЅРёСЏ Рє РІРµСЂС€РёРЅР°Рј
         for (size_t i = 0; i < count_v; ++i) {
-            // Применяем вращение по осям X, Y и Z последовательно
+            // РџСЂРёРјРµРЅСЏРµРј РІСЂР°С‰РµРЅРёРµ РїРѕ РѕСЃСЏРј X, Y Рё Z РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕ
             vertices[i] = rz * (ry * (rx * (vertices[i] - global_position))) + global_position;
         }
     }

@@ -5,32 +5,32 @@
 
 namespace mge {
     int* interpolated(int i0, int d0, int i1, int d1, int& size) {
-        // Проверка на то, что i0 и i1 разные
+        // РџСЂРѕРІРµСЂРєР° РЅР° С‚Рѕ, С‡С‚Рѕ i0 Рё i1 СЂР°Р·РЅС‹Рµ
         if (i0 == i1) {
             size = 1;
             int* values = new int[size];
-            values[0] = d0;  // Если индексы одинаковые, возвращаем одно значение
+            values[0] = d0;  // Р•СЃР»Рё РёРЅРґРµРєСЃС‹ РѕРґРёРЅР°РєРѕРІС‹Рµ, РІРѕР·РІСЂР°С‰Р°РµРј РѕРґРЅРѕ Р·РЅР°С‡РµРЅРёРµ
             return values;
         }
 
-        size = abs(i1 - i0) + 1;  // Количество интерполированных значений
+        size = abs(i1 - i0) + 1;  // РљРѕР»РёС‡РµСЃС‚РІРѕ РёРЅС‚РµСЂРїРѕР»РёСЂРѕРІР°РЅРЅС‹С… Р·РЅР°С‡РµРЅРёР№
         if (size <= 0) {
-            return nullptr;  // Невозможно интерполировать, если размер 0 или меньше
+            return nullptr;  // РќРµРІРѕР·РјРѕР¶РЅРѕ РёРЅС‚РµСЂРїРѕР»РёСЂРѕРІР°С‚СЊ, РµСЃР»Рё СЂР°Р·РјРµСЂ 0 РёР»Рё РјРµРЅСЊС€Рµ
         }
 
-        int* values = new int[size]; // Выделяем память для массива
+        int* values = new int[size]; // Р’С‹РґРµР»СЏРµРј РїР°РјСЏС‚СЊ РґР»СЏ РјР°СЃСЃРёРІР°
 
         if (!values) {
-            return nullptr; // Ошибка выделения памяти
+            return nullptr; // РћС€РёР±РєР° РІС‹РґРµР»РµРЅРёСЏ РїР°РјСЏС‚Рё
         }
 
-        // Если i0 не равно i1, выполняем интерполяцию
+        // Р•СЃР»Рё i0 РЅРµ СЂР°РІРЅРѕ i1, РІС‹РїРѕР»РЅСЏРµРј РёРЅС‚РµСЂРїРѕР»СЏС†РёСЋ
         int delta = d1 - d0;
         for (int i = 0; i < size; ++i) {
-            values[i] = d0 + (delta * i + (i1 - i0) / 2) / (i1 - i0); // Линейная интерполяция с округлением
+            values[i] = d0 + (delta * i + (i1 - i0) / 2) / (i1 - i0); // Р›РёРЅРµР№РЅР°СЏ РёРЅС‚РµСЂРїРѕР»СЏС†РёСЏ СЃ РѕРєСЂСѓРіР»РµРЅРёРµРј
         }
 
-        return values; // Возвращаем массив
+        return values; // Р’РѕР·РІСЂР°С‰Р°РµРј РјР°СЃСЃРёРІ
     }
 
     void DrawLine(void (*PutPixel)(int x, int y, int r, int g, int b), vec2<int> P0, vec2<int> P1, int color_r, int color_g, int color_b) {
@@ -50,7 +50,7 @@ namespace mge {
                 PutPixel(x, ys[i], color_r, color_g, color_b);
             }
 
-            delete[] ys; // Освобождаем память
+            delete[] ys; // РћСЃРІРѕР±РѕР¶РґР°РµРј РїР°РјСЏС‚СЊ
         }
         else {
             if (P0.y > P1.y) {
@@ -65,7 +65,7 @@ namespace mge {
                 PutPixel(xs[i], y, color_r, color_g, color_b);
             }
 
-            delete[] xs; // Освобождаем память
+            delete[] xs; // РћСЃРІРѕР±РѕР¶РґР°РµРј РїР°РјСЏС‚СЊ
         }
     }
 
@@ -78,12 +78,12 @@ namespace mge {
     }
 
     bool IsInTriangle(vec2<int> a, vec2<int> b, vec2<int> c, vec2<int> p) {
-        // Вычисляем значения для каждой стороны треугольника
-        int d1 = (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x); // Относительно стороны AB
-        int d2 = (c.x - b.x) * (p.y - b.y) - (c.y - b.y) * (p.x - b.x); // Относительно стороны BC
-        int d3 = (a.x - c.x) * (p.y - c.y) - (a.y - c.y) * (p.x - c.x); // Относительно стороны CA
+        // Р’С‹С‡РёСЃР»СЏРµРј Р·РЅР°С‡РµРЅРёСЏ РґР»СЏ РєР°Р¶РґРѕР№ СЃС‚РѕСЂРѕРЅС‹ С‚СЂРµСѓРіРѕР»СЊРЅРёРєР°
+        int d1 = (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x); // РћС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ СЃС‚РѕСЂРѕРЅС‹ AB
+        int d2 = (c.x - b.x) * (p.y - b.y) - (c.y - b.y) * (p.x - b.x); // РћС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ СЃС‚РѕСЂРѕРЅС‹ BC
+        int d3 = (a.x - c.x) * (p.y - c.y) - (a.y - c.y) * (p.x - c.x); // РћС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ СЃС‚РѕСЂРѕРЅС‹ CA
 
-        // Возвращаем результат в одной строке
+        // Р’РѕР·РІСЂР°С‰Р°РµРј СЂРµР·СѓР»СЊС‚Р°С‚ РІ РѕРґРЅРѕР№ СЃС‚СЂРѕРєРµ
         return (d1 >= 0 && d2 >= 0 && d3 >= 0) || (d1 <= 0 && d2 <= 0 && d3 <= 0);
     }
 
@@ -94,9 +94,9 @@ namespace mge {
         for (int y = box_min.y; y <= box_max.y; ++y) {
             for (int x = box_min.x; x <= box_max.x; ++x) {
                 vec2<int> p = { x, y };
-                // Проверяем, находится ли пиксель внутри треугольника
+                // РџСЂРѕРІРµСЂСЏРµРј, РЅР°С…РѕРґРёС‚СЃСЏ Р»Рё РїРёРєСЃРµР»СЊ РІРЅСѓС‚СЂРё С‚СЂРµСѓРіРѕР»СЊРЅРёРєР°
                 if (IsInTriangle(P0, P1, P2, p)) {
-                    PutPixel(x, y, color_r, color_g, color_b); // Рисуем пиксель
+                    PutPixel(x, y, color_r, color_g, color_b); // Р РёСЃСѓРµРј РїРёРєСЃРµР»СЊ
                 }
             }
         }
@@ -112,9 +112,9 @@ namespace mge {
         for (int y = box_min.y; y <= box_max.y; ++y) {
             for (int x = box_min.x; x <= box_max.x; ++x) {
                 vec2<int> p = { x, y };
-                // Проверяем, находится ли пиксель внутри треугольника
+                // РџСЂРѕРІРµСЂСЏРµРј, РЅР°С…РѕРґРёС‚СЃСЏ Р»Рё РїРёРєСЃРµР»СЊ РІРЅСѓС‚СЂРё С‚СЂРµСѓРіРѕР»СЊРЅРёРєР°
                 if (IsInTriangle(P0, P1, P2, p)) {
-                    // Вычисляем весовые коэффициенты для интерполяции цвета
+                    // Р’С‹С‡РёСЃР»СЏРµРј РІРµСЃРѕРІС‹Рµ РєРѕСЌС„С„РёС†РёРµРЅС‚С‹ РґР»СЏ РёРЅС‚РµСЂРїРѕР»СЏС†РёРё С†РІРµС‚Р°
                     float areaTotal = 0.5f * (-P1.y * P2.x + P0.y * (-P1.x + P2.x) + P0.x * (P1.y - P2.y) + P1.x * P2.y);
                     float area0 = 0.5f * (-P1.y * P2.x + p.y * (-P1.x + P2.x) + p.x * (P1.y - P2.y) + P1.x * P2.y);
                     float area1 = 0.5f * (-p.y * P2.x + P0.y * (-p.x + P2.x) + P0.x * (p.y - P2.y) + p.x * P2.y);
@@ -124,12 +124,12 @@ namespace mge {
                     float beta = area1 / areaTotal;
                     float gamma = area2 / areaTotal;
 
-                    // Интерполируем цвет
+                    // РРЅС‚РµСЂРїРѕР»РёСЂСѓРµРј С†РІРµС‚
                     int interpolated_r = static_cast<int>(C0_r * alpha + C1_r * beta + C2_r * gamma);
                     int interpolated_g = static_cast<int>(C0_g * alpha + C1_g * beta + C2_g * gamma);
                     int interpolated_b = static_cast<int>(C0_b * alpha + C1_b * beta + C2_b * gamma);
 
-                    // Рисуем пиксель
+                    // Р РёСЃСѓРµРј РїРёРєСЃРµР»СЊ
                     PutPixel(x, y, interpolated_r, interpolated_g, interpolated_b);
                 }
             }
@@ -140,7 +140,7 @@ namespace mge {
         for (int angle = 0; angle < 360; angle++) {
             int x = centerX + static_cast<int>(radius * std::cos(angle * 3.14159 / 180));
             int y = centerY + static_cast<int>(radius * std::sin(angle * 3.14159 / 180));
-            PutPixel(x, y, color_r, color_g, color_b);  // Рисуем каждый пиксель круга
+            PutPixel(x, y, color_r, color_g, color_b);  // Р РёСЃСѓРµРј РєР°Р¶РґС‹Р№ РїРёРєСЃРµР»СЊ РєСЂСѓРіР°
         }
     }
 }
