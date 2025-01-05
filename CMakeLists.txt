@@ -10,7 +10,8 @@ set(GRAPHICS_LIBRARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs/GraphicsLibrarry")  #
 set(GRAPHICS_LIBRARY "${GRAPHICS_LIBRARY_DIR}/GraphicsLibrary.lib")	
 
 #Создайте исполняемый файл
-add_executable(game_engine libs/MGE/render/model.cpp
+add_executable(game_engine  libs/MGE/render/model.cpp
+                            libs/MGE/render/drawFun.cpp
                             src/main.cpp )
 
 #Линковка к библиотеке .lib
