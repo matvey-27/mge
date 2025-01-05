@@ -1,8 +1,8 @@
 #include "../include/GraphicsLibrarry/libs.h"
 // #include "../include/MGE/Utils.hpp"
 
-// #include "../include/MGE/math/vec2.h"
-#include "../include/MGE/math/vec3.h"
+// #include "../include/MGE/math/vec2.hpp"
+#include "../include/MGE/math/vec3.hpp"
 #include "../include/MGE/math/tringles.hpp"
 
 // #include "../include/MGE/render/drawFun.h"

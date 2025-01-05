@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-#include "vec2.h"
+#include "vec2.hpp"
 
 namespace mge {
     template <typename T>

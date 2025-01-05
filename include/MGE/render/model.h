@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../math/vec2.h"
-#include "../math/vec3.h"
-#include "../math/mat4x4.h"
+#include "../math/vec2.hpp"
+#include "../math/vec3.hpp"
+#include "../math/mat4x4.hpp"
 
 #include "../math/tringles.hpp"
 #include "../Utils.hpp"
