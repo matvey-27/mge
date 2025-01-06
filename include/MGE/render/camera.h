@@ -92,5 +92,36 @@ namespace mge {
         void setPos(vec3<float> v);
 
         void move(vec3<float> v);
+
+        // Ближняя плоскость
+        vec3<float> near_plane_normal();
+
+        float near_plane_d();
+        // Дальняя плоскость
+        vec3<float> far_plane_normal();
+
+        float far_plane_d();
+
+        // Левая плоскость
+        vec3<float> left_plane_normal();
+
+        float left_plane_d();
+
+        // Правая плоскость
+        vec3<float> right_plane_normal();
+
+        float right_plane_d();
+
+        // Верхняя плоскость
+        vec3<float> upper_plane_normal();
+
+        float upper_plane_d();
+
+        // Нижняя плоскость
+        vec3<float> bottom_plane_normal();
+
+        float bottom_plane_d();
+
+        void TestRenderModel(void (*PutPixel)(int x, int y, int r, int g, int b), Model model);
     };
 }

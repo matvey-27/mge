@@ -50,7 +50,7 @@ int main() {
     cube.move(mge::vec3<float>(0, 0, 0));
 
     // Инициализация камеры
-    mge::camera cam(800, 600, 60.0f, 0.1f, 1000.0f, mge::vec3<float>(0, 0, -5), mge::vec3<float>(0, 0, 0), mge::vec3<float>(0, -1, 0));
+    mge::camera cam(800, 600, 60.0f, 0.1f, 1000.0f, mge::vec3<float>(0, 0, -5), mge::vec3<float>(0, 0, 0), mge::vec3<float>(0, 1, 0));
 
     // Переменные для углов вращения камеры
     float i = 0.0f;
@@ -58,7 +58,7 @@ int main() {
     while (IsWindowOpen()) {
         ClearScreen(0, 100, 100);
 
-        cam.RenderModel(DrawPixel, cube);
+        cam.TestRenderModel(DrawPixel, cube);
 
         cam.updateTargetMatrix(mge::vec3<float>((float)GetMousePosXScreenToClient() / 80, (float)GetMousePosYScreenToClient() / -60, 0));
         if (GetStateKey(65)) cam.move(mge::vec3<float>(-0.11 + cam.target.normalize().x, 0, 0)); // a

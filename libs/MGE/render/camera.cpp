@@ -85,6 +85,7 @@ namespace mge {
                 renderVertices(model.getVertex(model.getTriangls(i).n3)));
         }
     }
+
     // поворот позиции не изменяя напровление 
     void camera::rotatePosCameraAroundPoint(float ax_deg, float ay_deg, float az_deg, vec3<float> rotationPoint) {
         // Преобразование углов из градусов в радианы
@@ -141,5 +142,111 @@ namespace mge {
 
     void camera::move(vec3<float> v) {
         pos = pos + v;
+    }
+
+    // Ближняя плоскость
+    vec3<float> camera::near_plane_normal() {
+        return f; // Нормальный вектор
+    }
+
+    float camera::near_plane_d() {
+        return -dot(near_plane_normal(), pos + f * zNear);
+    }
+
+    // Дальняя плоскость
+    vec3<float> camera::far_plane_normal() {
+        return f * -1; // Нормальный вектор
+    }
+
+    float camera::far_plane_d() {
+        return -dot(far_plane_normal(), pos + f * zFar);
+    }
+
+    // Левая плоскость
+    vec3<float> camera::left_plane_normal() {
+        return s; // Нормальный вектор
+    }
+
+    float camera::left_plane_d() {
+        return -dot(left_plane_normal(), pos - s * (height / 2));
+    }
+
+    // Правая плоскость
+    vec3<float> camera::right_plane_normal() {
+        return s * -1; // Нормальный вектор
+    }
+
+    float camera::right_plane_d() {
+        return -dot(right_plane_normal(), pos + s * (height / 2));
+    }
+
+    // Верхняя плоскость
+    vec3<float> camera::upper_plane_normal() {
+        return u; // Нормальный вектор
+    }
+
+    float camera::upper_plane_d() {
+        return -dot(upper_plane_normal(), pos + u * (height / 2));
+    }
+
+    // Нижняя плоскость
+    vec3<float> camera::bottom_plane_normal() {
+        return u * -1; // Нормальный вектор
+    }
+
+    float camera::bottom_plane_d() {
+        return -dot(bottom_plane_normal(), pos - u * (height / 2));
+    }
+
+    void camera::TestRenderModel(void (*PutPixel)(int x, int y, int r, int g, int b), Model model) {
+        vec3<float> center = model.getCenter(); // Получаем центр модели
+        float radius = model.getR(); // Получаем радиус сферы
+
+        // Проверяем, пересекается ли сфера с каждой из плоскостей
+        bool isVisible = true;
+
+        // Проверка для ближней плоскости
+        if (dot(near_plane_normal(), center) + near_plane_d() < -radius) {
+            isVisible = false;
+        }
+
+        // Проверка для дальней плоскости
+        if (dot(far_plane_normal(), center) + far_plane_d() < -radius) {
+            isVisible = false;
+        }
+
+        // Проверка для левой плоскости
+        if (dot(left_plane_normal(), center) + left_plane_d() < -radius) {
+            isVisible = false;
+        }
+
+        // Проверка для правой плоскости
+        if (dot(right_plane_normal(), center) + right_plane_d() < -radius) {
+            isVisible = false;
+        }
+
+        // Проверка для верхней плоскости
+        if (dot(upper_plane_normal(), center) + upper_plane_d() < -radius) {
+            isVisible = false;
+        }
+
+        // Проверка для нижней плоскости
+        if (dot(bottom_plane_normal(), center) + bottom_plane_d() < -radius) {
+            isVisible = false;
+        }
+
+        // Если объект видим, отрисовываем его
+        if (isVisible) {
+            for (int i = 0; i < model.getTrianglsCount(); i++) {
+                mge::DrawFilledTriangle(PutPixel,
+                    renderVertices(model.getVertex(model.getTriangls(i).n1)),
+                    renderVertices(model.getVertex(model.getTriangls(i).n2)),
+                    renderVertices(model.getVertex(model.getTriangls(i).n3)), model.getTriangls(i).r, model.getTriangls(i).g, model.getTriangls(i).b);
+                mge::DrawWireframeTringle(PutPixel,
+                    renderVertices(model.getVertex(model.getTriangls(i).n1)),
+                    renderVertices(model.getVertex(model.getTriangls(i).n2)),
+                    renderVertices(model.getVertex(model.getTriangls(i).n3)));
+            }
+        }
     }
 }
