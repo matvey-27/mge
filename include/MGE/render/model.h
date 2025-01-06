@@ -8,6 +8,7 @@
 #include "../Utils.hpp"
 
 #include <stdexcept>
+#include <cmath>
 
 namespace mge {
     class Model {
@@ -46,6 +47,10 @@ namespace mge {
 
         // Метод для доступа к треугольников
         Triangles<int>& getTriangls(size_t index);
+
+        vec3<float> getCenter();
+
+        float getR();
 
         // передвижение
         void move(vec3<float> v);

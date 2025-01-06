@@ -1,4 +1,5 @@
 #include "../../../Include/MGE/render/model.h"
+#include <cmath>
 
 using namespace mge;
 
@@ -94,6 +95,40 @@ Triangles<int>& Model::getTriangls(size_t index) {
         throw std::out_of_range("Index out of range");
     }
     return triangles[index];
+}
+
+vec3<float> Model::getCenter(){
+    int i = 0;
+    vec3<float> sum;
+    while (i != getVertexCount()) {
+        sum = sum + getVertex(i);
+        i++;
+    }
+    return  sum / i;
+}
+
+float Model::getR(){
+    vec3<float> C = getCenter();
+    int i = 0;
+    
+    float r = 0;
+    float d;
+
+    while (i != getVertexCount()) {
+        d = std::sqrt(
+           (C.x - vertices[i].x) * (C.x - vertices[i].x) +
+           (C.y - vertices[i].y) * (C.y - vertices[i].y) +
+           (C.z - vertices[i].z) * (C.z - vertices[i].z) 
+        );
+
+        if (d > r) {
+            r = d;
+        } 
+
+        i++;
+    }
+
+    return  r;
 }
 
 // Метод для перемещения 

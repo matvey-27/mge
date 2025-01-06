@@ -41,6 +41,11 @@ namespace mge {
             );
         }
 
+        // оператор -
+        vec3<T> operator/(T p) {
+            return vec3<T>(this->x / p, this->y / p, this->z / p);
+        }
+
         // длина вектора
         T length() const {
             return std::sqrt(this->x * this->x + this->y * this->y + this->z * this->z);

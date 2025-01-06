@@ -11,6 +11,7 @@
 
 // #include <stdexcept>
 #include <thread>
+#include <iostream>
 // #include <cmath>
 
 
@@ -66,6 +67,13 @@ int main() {
         if (GetStateKey(83)) cam.move(mge::vec3<float>(0, 0, -0.11 + cam.target.normalize().z)); // s 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
+
+    std::cout << cube.getR() << "\n";
+
+    std::cout << cube.getCenter().x << "\n";
+    std::cout << cube.getCenter().y << "\n";
+    std::cout << cube.getCenter().z << "\n";
+    
 
     return 0; // Завершаем программу
 }
